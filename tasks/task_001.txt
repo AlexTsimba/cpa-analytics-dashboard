@@ -17,13 +17,13 @@ Verify project structure, run TypeScript compiler to check for errors, ensure al
 ### Details:
 Use 'npx create-next-app@latest' with the '--typescript' flag to set up a new Next.js 15 project with TypeScript support
 
-## 2. Configure TypeScript [pending]
+## 2. Configure TypeScript [done]
 ### Dependencies: 1.1
 ### Description: Set up and customize TypeScript configuration for the project
 ### Details:
 Create or modify tsconfig.json file with appropriate compiler options for Next.js 15 and your project requirements. Ensure strict mode is enabled as a quality gate requirement.
 
-## 3. Set up ESLint [pending]
+## 3. Set up ESLint [in-progress]
 ### Dependencies: 1.1, 1.2
 ### Description: Configure ESLint for TypeScript and Next.js
 ### Details:

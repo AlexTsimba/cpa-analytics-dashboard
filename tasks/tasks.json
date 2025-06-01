@@ -26,7 +26,7 @@
             1
           ],
           "details": "Create or modify tsconfig.json file with appropriate compiler options for Next.js 15 and your project requirements. Ensure strict mode is enabled as a quality gate requirement.",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 3,
@@ -37,7 +37,7 @@
             2
           ],
           "details": "Install necessary ESLint plugins and create .eslintrc.json file with rules for TypeScript and Next.js. Configure as a quality gate with pre-commit hooks to enforce compliance.",
-          "status": "pending"
+          "status": "in-progress"
         },
         {
           "id": 4,
