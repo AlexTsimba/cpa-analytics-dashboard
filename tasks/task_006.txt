@@ -1,0 +1,11 @@
+# Task ID: 6
+# Title: Develop Data Fetching Layer with React Query
+# Status: pending
+# Dependencies: 3, 4, 5
+# Priority: high
+# Description: Implement data fetching and caching strategy using React Query.
+# Details:
+Install React Query (v4.29+). Set up QueryClient and QueryClientProvider. Create custom hooks for fetching and caching CSV data. Implement query invalidation and refetching strategies. Integrate with XState for managing loading states. Implement error handling and retry logic.
+
+# Test Strategy:
+Write integration tests for React Query hooks. Test caching behavior, error handling, and refetching scenarios.

@@ -1,0 +1,11 @@
+# Task ID: 7
+# Title: Create Global Filtering System
+# Status: pending
+# Dependencies: 5, 6
+# Priority: high
+# Description: Implement a global filtering system with AND logic and persistence across tabs.
+# Details:
+Create a FilterStore using Zustand. Implement filter categories: date range, Sub2/Landing ID, Source, OS Family, Currency, Player Status. Use react-datepicker (v4.12+) for date range selection. Implement multi-select functionality for applicable filters. Create utility functions for applying filters to data. Ensure filter persistence across tab navigation.
+
+# Test Strategy:
+Write unit tests for filter logic. Test filter application on sample datasets. Verify filter persistence across tab navigation.

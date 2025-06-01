@@ -1,0 +1,363 @@
+# 📊 CPA Analytics Dashboard — Product Requirements Document (PRD)
+
+## 🧱 Product Overview
+
+The **CPA Analytics Dashboard** is a modular web application designed to track and optimize performance metrics for CPA (Cost-Per-Acquisition) marketing campaigns. It empowers marketers, analysts, and product owners with real-time data on user behavior, conversions, ROI, and campaign quality through highly interactive charts, filters, and cohort tools.
+
+> 🧠 All business logic is decoupled from UI and data sources. Data providers can be swapped (CSV files, Google Sheets, API, DB, etc.) without impacting the frontend or logic.
+
+## ⚙️ Architecture Overview
+
+- **Frontend**: Next.js 15, React 18, TypeScript
+- **UI**: Shadcn UI, Shadcn Charts, Lucide React icons
+- **Validation**: Zod
+- **State Management**: Zustand + XState (FSM-based UI)
+- **Fetching Layer**: React Query with FSM states (idle, loading, success, error)
+- **Data Providers**: Abstract contract-based architecture supporting CSV upload/processing
+- **Theming**: Dark mode + Light mode depending on user preference
+- **Responsiveness**: Mobile-first design
+
+---
+
+## 🔄 Development Workflow & Quality Assurance
+
+### Task Execution Methodology
+
+#### Pre-Task Analysis
+- **Complexity Assessment**: Every task automatically evaluated for complexity (1-10 scale)
+- **Auto-Decomposition**: Tasks with complexity > 6 automatically broken into subtasks ≤ 5
+- **Technology Research**: Context7 integration for up-to-date documentation and best practices
+- **Dependency Validation**: Ensure all prerequisites are met
+
+#### Task Completion Requirements
+**Every task must include:**
+
+1. **Testing Suite**
+   - **Vitest Tests**: Unit and integration tests for all functionality
+   - **Playwright Tests**: End-to-end tests for user workflows
+   - **Test Coverage**: Minimum 80% code coverage
+   - **Test Documentation**: Clear test descriptions and scenarios
+
+2. **Version Control**
+   - **Git Commit**: Each completed task commits with semantic message format
+   - **Commit Format**: `feat|fix|refactor: [Task-ID] - [Description]`
+   - **Branch Strategy**: Feature branches for major tasks, direct commits for subtasks
+   - **Clean History**: Atomic commits with meaningful messages
+
+3. **Documentation**
+   - **Task Report**: Detailed completion report with:
+     - What was implemented
+     - Files created/modified
+     - How to test manually
+     - Any dependencies or notes
+   - **Code Comments**: Self-documenting code with JSDoc where needed
+
+#### Quality Gates
+- **Automated Testing**: All tests pass before task completion
+- **Code Quality**: ESLint + Prettier compliance
+- **Type Safety**: TypeScript strict mode with no errors
+- **Performance**: No performance regressions
+
+#### Review & Approval Process
+- **Task Completion Report**: Generated after each task
+- **Manual Testing Instructions**: Step-by-step verification guide
+- **Stakeholder Review**: Explicit approval required before next task
+- **Feedback Integration**: Address any issues before proceeding
+
+### Testing Strategy
+
+#### Unit Testing (Vitest)
+- **Components**: All React components with props and state testing
+- **Utilities**: Data processing, validation, and calculation functions
+- **Hooks**: Custom React hooks with various scenarios
+- **Services**: Data providers and business logic
+
+#### Integration Testing (Vitest)
+- **API Integration**: Data provider interactions
+- **State Management**: Zustand store operations
+- **Component Integration**: Complex component interactions
+
+#### End-to-End Testing (Playwright)
+- **User Workflows**: Complete user journeys through the application
+- **Cross-Browser**: Chrome, Firefox, Safari testing
+- **Mobile Testing**: Responsive design validation
+- **Performance Testing**: Load times and interactions
+
+#### Test Automation
+- **Pre-commit Hooks**: Run tests before git commits
+- **CI/CD Pipeline**: Automated testing on push
+- **Test Reports**: Coverage and results reporting
+
+---
+
+## 🧠 System Architecture
+
+### 1. Data Layer
+
+- Unified `DataProvider` interface
+- Initial implementation: CSV file processing (report.csv + traffic_report.csv)
+- Runtime validation with Zod schemas
+- Caching strategy: React Query / SWR
+- Future extensibility: Google Sheets, REST API, DB
+
+### 2. Business Logic Layer
+
+- Metric calculations (Cost2Dep, ROAS, conversions, etc.)
+- Data aggregation & cohort analysis services
+- Date-based filtering (FTD vs Registration date)
+- Cross-file data joining (report + traffic data)
+- FSM-compliant structure
+- Preferred libraries: `d3-array`, `date-fns`, `lodash`
+
+### 3. Presentation Layer
+
+- Modular Shadcn UI components
+- FSM logic for all async UI (idle/loading/success/error)
+- Auto-refresh capabilities
+- Progressive enhancement
+- Charts: Shadcn Charts with custom theming
+
+---
+
+## 📋 Data Structure Analysis
+
+### Report.csv (1967 rows) - Player Data
+**Key Fields:**
+- Player ID, Original player ID
+- Sign up date, First deposit date  
+- Promo ID, Promo code
+- Tag: os (Android/iOS/Windows), Tag: source, Tag: sub2
+- Prequalified, Duplicate, Self-excluded, Disabled
+- Currency (EUR), FTD count, FTD sum
+- Deposits count, Deposits sum, Cashouts count, Cashouts sum
+- Casino bets count, Casino Real NGR, Fixed per player
+
+### Traffic Report.csv (404 rows) - Traffic Data
+**Key Fields:**
+- date, foreign_landing_id, os_family
+- all_clicks, unique_clicks, registrations_count
+- ftd_count, deposits_count
+- cr, cftd, cd, rftd (conversion metrics)
+
+### Data Relationships
+- `Tag: sub2` ↔ `foreign_landing_id` (landing page mapping)
+- `Tag: os` ↔ `os_family` (operating system)
+- `Date` ↔ `date` (time dimension)
+
+---
+
+## 🗂️ Tabs & Views
+
+### 1. Overview Tab
+- KPI cards (FTD Count, CPA Cost, NGR, ROAS)
+- Time-series line chart showing key metrics over time
+- Toggleable metrics display
+- Summary statistics
+
+### 2. Analytics Tab
+- Traffic breakdown by Source → Sub2 → OS
+- Top performers table (by conversion rates, revenue)
+- Detailed player analysis
+- Export functionality (CSV/XLS)
+
+### 3. Conversions Tab
+- Conversion funnel: Clicks → Registrations → FTD → Deposits
+- Metrics: CR (V2R), CFTD (R2D), CD, RFTD
+- Daily conversion breakdown
+- 7-day moving average trends
+
+### 4. Cohorts Tab
+- Player retention analysis
+- Grouping by Day/Week/Month cohorts
+- ROAS & Cost2Dep progression over time
+- Cohort heatmaps and trends
+
+---
+
+## 🔍 Filtering System
+
+- AND logic between & within filter categories
+- Global filter persistence across all tabs
+- **Available Filters:**
+  - Date range with mode selection (Registration vs FTD based)
+  - Sub2 / Landing ID (multi-select from traffic data)
+  - Source (multi-select, depends on Sub2 selection)
+  - OS Family (Android, iOS, Windows, Other, Mac OS X, Chrome OS, Linux)
+  - Currency (EUR - expandable)
+  - Player Status (Prequalified, Duplicate, Self-excluded, Disabled)
+- **Filter Presets:** Today, Last 7d, Last 30d, Last 90d, Custom range
+- UTC timestamp handling
+
+---
+
+## 📈 KPIs & Metrics
+
+### Primary Metrics
+- **FTD Count**: Total first-time depositors
+- **CPA Cost**: Fixed payout × qualified FTD
+- **NGR**: Net Gaming Revenue (Casino Real NGR)
+- **Deposits & Cashouts**: Count and sum values
+
+### Performance Metrics
+- **Cost2Dep**: Deposits Sum / CPA Cost
+- **ROAS**: (NGR / CPA Cost) × 100
+
+### Behavioral Metrics
+- **Avg Deposits per FTD**: Deposits Sum / FTD Count
+- **Avg Deposit Amount**: Total Deposits / Deposit Count
+- **Avg FTD Amount**: FTD Sum / FTD Count
+
+### Quality Metrics
+- **Approval Rate**: Prequalified / Total Players
+- **Duplicate Rate**: Duplicates / Total Players
+
+### Conversion Metrics (from Traffic data)
+- **CR** (Click-to-Registration): registrations_count / unique_clicks × 100
+- **CFTD** (Click-to-FTD): ftd_count / unique_clicks × 100  
+- **CD** (Click-to-Deposit): deposits_count / unique_clicks × 100
+- **RFTD** (Registration-to-FTD): ftd_count / registrations_count × 100
+
+### Cohort Metrics
+- Retention percentage by cohort periods
+- Revenue progression (ROAS/Cost2Dep) over time
+
+---
+
+## 🔁 State Machines (FSM)
+
+All interactive UI and async operations modeled via XState:
+- Data fetching and processing states
+- Filter application workflow
+- Chart rendering pipeline
+- Export generation flow
+- Error handling and retry logic
+
+**Sample State Structure:**
+```typescript
+type DataState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'processing' }
+  | { status: 'success'; data: ProcessedData }
+  | { status: 'error'; error: Error };
+```
+
+---
+
+## 📦 Tech Stack Summary
+
+| Layer            | Technology                         |
+|------------------|------------------------------------|
+| **Frontend**     | Next.js 15, React 18, TypeScript  |
+| **State Mgmt**   | Zustand, XState                   |
+| **UI Framework** | Shadcn UI, Shadcn Charts          |
+| **Icons**        | Lucide React                       |
+| **Data Layer**   | CSV Processing, React Query       |
+| **Validation**   | Zod schemas                        |
+| **Styling**      | Tailwind CSS, CSS Variables       |
+| **Charts**       | Recharts (via Shadcn Charts)      |
+| **Testing**      | Vitest, Playwright, Testing Library |
+| **Quality**      | ESLint, Prettier, Husky           |
+| **CI/CD**        | GitHub Actions (configurable)     |
+
+---
+
+## 🚀 Development Phases
+
+### Phase 1: Foundation & Data Layer (Weeks 1–2)
+- Next.js 15 + TypeScript project setup with complete testing infrastructure
+- Shadcn UI integration and theming with component tests
+- Data provider architecture with CSV processing and comprehensive test coverage
+- Zod validation schemas for both datasets with validation tests
+- Basic layout and navigation with E2E tests
+
+### Phase 2: Filtering & Overview (Weeks 3–4)
+- Global filter system implementation with state management tests
+- Filter persistence across tabs with integration tests
+- Overview tab with KPI cards and component testing
+- Basic time-series chart with visual regression tests
+- Data aggregation engine with performance tests
+
+### Phase 3: Analytics & Conversions (Weeks 5–6)
+- Analytics tab with breakdown tables and data accuracy tests
+- Top performers analysis with calculation validation
+- Conversions tab with funnel visualization and interaction tests
+- Advanced chart components with accessibility tests
+- Export functionality with file generation tests
+
+### Phase 4: Cohorts & Polish (Weeks 7–8)
+- Cohort analysis engine with complex calculation tests
+- Cohort visualization (heatmaps) with performance tests
+- Performance optimization with benchmark tests
+- Mobile responsive design with device testing
+- Final testing suite and production readiness validation
+
+---
+
+## 📊 Success Criteria
+
+| Type           | Metric                              |
+|----------------|-------------------------------------|
+| **Performance** | Page load <3s, Filter response <1s |
+| **UX**         | Filter usage >80%, Export >30%     |
+| **Technical**  | 99.9% uptime, TypeScript coverage  |
+| **Mobile**     | Lighthouse score >90                |
+| **Analytics**  | Average session >10 minutes        |
+| **Quality**    | 80%+ test coverage, zero TS errors |
+
+---
+
+## 🛡 Risk Mitigation
+
+| Risk                        | Mitigation Strategy                    |
+|-----------------------------|----------------------------------------|
+| **Large CSV file performance** | Virtualized tables, progressive loading |
+| **Data format inconsistencies** | Robust Zod schemas, fallback parsers |
+| **Memory usage**               | Data chunking, efficient aggregation |
+| **Mobile performance**         | Responsive design, lazy loading      |
+| **State complexity**           | FSM pattern, clear state separation   |
+| **Testing complexity**         | Automated test generation, clear patterns |
+| **Code quality drift**         | Strict linting, pre-commit hooks     |
+
+---
+
+## 👥 Target Personas
+
+- **Performance Marketer**: Focused on Cost2Dep and ROAS optimization
+- **Data Analyst**: Deep-dive into cohorts and conversion funnels  
+- **Campaign Manager**: Overview dashboards and source performance
+- **Executive**: High-level KPIs and trend analysis
+
+---
+
+## 🔧 Technical Requirements
+
+### Data Processing
+- Handle 2000+ player records efficiently
+- Real-time metric calculations
+- Cross-dataset joining and aggregation
+- Memory-efficient data structures
+
+### UI/UX Requirements
+- Responsive design (mobile-first)
+- Dark/light theme support
+- Accessible components (WCAG 2.1)
+- Intuitive filter interactions
+- Fast chart rendering
+
+### Integration Requirements
+- Extensible data provider architecture
+- Export capabilities (CSV, Excel)
+- State persistence
+- Error boundary implementation
+
+### Quality Requirements
+- Comprehensive test coverage (80%+)
+- TypeScript strict mode compliance
+- Performance benchmarks
+- Cross-browser compatibility
+- Mobile device testing
+
+---
+
+> ✅ PRD validated with real CSV data structure, optimized for CPA marketing analytics requirements, and enhanced with comprehensive quality assurance workflow.
