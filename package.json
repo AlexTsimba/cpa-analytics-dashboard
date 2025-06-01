@@ -18,7 +18,11 @@
     "commitlint:check": "commitlint --from HEAD~1 --to HEAD --verbose",
     "commitlint:last": "commitlint --last --verbose",
     "quality": "npm run type-check && npm run lint:strict && npm run format:check && npm run commitlint:last",
-    "prepare": "husky"
+    "prepare": "husky",
+    "commit:help": "./scripts/git-semantic.sh examples",
+    "commit:validate": "./scripts/git-semantic.sh validate",
+    "commit:interactive": "./scripts/git-semantic.sh commit",
+    "git:status": "./scripts/git-semantic.sh status"
   },
   "dependencies": {
     "next": "15.3.3",

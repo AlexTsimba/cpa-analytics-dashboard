@@ -1,4 +1,5 @@
 // Another test file
 export const anotherTest = () => {
-  console.log('Another test');
+  // Another test
+  return 'another test';
 };
