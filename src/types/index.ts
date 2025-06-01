@@ -1,6 +1,6 @@
 /**
  * Global Type Definitions for CPA Analytics Dashboard
- * 
+ *
  * This file contains shared TypeScript types used throughout the application.
  * Following strict TypeScript practices with comprehensive type safety.
  */
@@ -19,7 +19,14 @@ export interface PlayerData {
   readonly firstDepositDate: string | null;
   readonly promoId: number;
   readonly promoCode: string;
-  readonly tagOs: 'Android' | 'iOS' | 'Windows' | 'Other' | 'Mac OS X' | 'Chrome OS' | 'Linux';
+  readonly tagOs:
+    | 'Android'
+    | 'iOS'
+    | 'Windows'
+    | 'Other'
+    | 'Mac OS X'
+    | 'Chrome OS'
+    | 'Linux';
   readonly tagSource: string;
   readonly tagSub2: number;
   readonly date: string;
@@ -45,7 +52,14 @@ export interface PlayerData {
 export interface TrafficData {
   readonly date: string;
   readonly foreignLandingId: number;
-  readonly osFamily: 'Android' | 'iOS' | 'Windows' | 'Other' | 'Mac OS X' | 'Chrome OS' | 'Linux';
+  readonly osFamily:
+    | 'Android'
+    | 'iOS'
+    | 'Windows'
+    | 'Other'
+    | 'Mac OS X'
+    | 'Chrome OS'
+    | 'Linux';
   readonly allClicks: number;
   readonly uniqueClicks: number;
   readonly registrationsCount: number;
@@ -188,7 +202,10 @@ export interface DataMachineContext {
  */
 export type DataMachineEvent =
   | { type: 'LOAD_DATA' }
-  | { type: 'DATA_LOADED'; data: { players: readonly PlayerData[]; traffic: readonly TrafficData[] } }
+  | {
+      type: 'DATA_LOADED';
+      data: { players: readonly PlayerData[]; traffic: readonly TrafficData[] };
+    }
   | { type: 'DATA_ERROR'; error: Error }
   | { type: 'RETRY' }
   | { type: 'RESET' };
@@ -203,7 +220,9 @@ export type DataMachineEvent =
 export interface DataProvider {
   readonly loadPlayerData: () => Promise<readonly PlayerData[]>;
   readonly loadTrafficData: () => Promise<readonly TrafficData[]>;
-  readonly validateData: (data: unknown) => data is PlayerData[] | TrafficData[];
+  readonly validateData: (
+    data: unknown
+  ) => data is PlayerData[] | TrafficData[];
 }
 
 /**
@@ -251,7 +270,10 @@ export type NonNullable<T> = T extends null | undefined ? never : T;
  */
 export class DataValidationError extends Error {
   readonly code = 'DATA_VALIDATION_ERROR';
-  constructor(message: string, public readonly field: string) {
+  constructor(
+    message: string,
+    public readonly field: string
+  ) {
     super(message);
     this.name = 'DataValidationError';
   }
@@ -259,7 +281,10 @@ export class DataValidationError extends Error {
 
 export class CsvParsingError extends Error {
   readonly code = 'CSV_PARSING_ERROR';
-  constructor(message: string, public readonly row?: number) {
+  constructor(
+    message: string,
+    public readonly row?: number
+  ) {
     super(message);
     this.name = 'CsvParsingError';
   }
@@ -267,7 +292,10 @@ export class CsvParsingError extends Error {
 
 export class DataProviderError extends Error {
   readonly code = 'DATA_PROVIDER_ERROR';
-  constructor(message: string, public readonly provider: string) {
+  constructor(
+    message: string,
+    public readonly provider: string
+  ) {
     super(message);
     this.name = 'DataProviderError';
   }
@@ -276,18 +304,5 @@ export class DataProviderError extends Error {
 // ============================================================================
 // Module Declarations
 // ============================================================================
-
-// Global environment variables types
-declare global {
-  /* eslint-disable @typescript-eslint/no-namespace */
-  namespace NodeJS {
-    interface ProcessEnv {
-      readonly NODE_ENV: 'development' | 'production' | 'test';
-      readonly NEXT_PUBLIC_APP_URL: string;
-      readonly NEXT_PUBLIC_API_URL?: string;
-    }
-  }
-  /* eslint-enable @typescript-eslint/no-namespace */
-}
 
 export {};

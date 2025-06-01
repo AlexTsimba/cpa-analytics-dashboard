@@ -23,19 +23,19 @@ Use 'npx create-next-app@latest' with the '--typescript' flag to set up a new Ne
 ### Details:
 Create or modify tsconfig.json file with appropriate compiler options for Next.js 15 and your project requirements. Ensure strict mode is enabled as a quality gate requirement.
 
-## 3. Set up ESLint [in-progress]
+## 3. Set up ESLint [done]
 ### Dependencies: 1.1, 1.2
 ### Description: Configure ESLint for TypeScript and Next.js
 ### Details:
 Install necessary ESLint plugins and create .eslintrc.json file with rules for TypeScript and Next.js. Configure as a quality gate with pre-commit hooks to enforce compliance.
 
-## 4. Configure Prettier [pending]
+## 4. Configure Prettier [done]
 ### Dependencies: 1.1, 1.2, 1.3
 ### Description: Set up Prettier for consistent code formatting
 ### Details:
 Install Prettier, create .prettierrc file, and integrate with ESLint for TypeScript and Next.js projects. Set up as a quality gate with pre-commit hooks to enforce compliance.
 
-## 5. Set up environment variables [pending]
+## 5. Set up environment variables [done]
 ### Dependencies: 1.1
 ### Description: Configure environment variables for different environments
 ### Details:
@@ -59,7 +59,7 @@ Install Vitest and related dependencies. Create vitest.config.ts file. Set up te
 ### Details:
 Install Playwright and related dependencies. Create playwright.config.ts file. Set up e2e test directory with appropriate test scenarios. Configure CI integration for automated testing.
 
-## 9. Configure Git with semantic versioning [pending]
+## 9. Configure Git with semantic versioning [in-progress]
 ### Dependencies: 1.1
 ### Description: Set up Git repository with semantic versioning commit standards
 ### Details:

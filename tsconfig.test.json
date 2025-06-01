@@ -22,10 +22,5 @@
     "**/*.spec.ts",
     "**/*.spec.tsx"
   ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "out",
-    "dist"
-  ]
+  "exclude": ["node_modules", ".next", "out", "dist"]
 }

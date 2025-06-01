@@ -4,7 +4,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    
+
     // Strict Mode Settings (Enhanced)
     "strict": true,
     "noImplicitAny": true,
@@ -18,14 +18,14 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "exactOptionalPropertyTypes": true,
-    
+
     // Additional Quality Settings
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": true,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
-    
+
     // Module Settings
     "noEmit": true,
     "esModuleInterop": true,
@@ -34,7 +34,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": false,
-    
+
     // JSX and Next.js Settings
     "jsx": "preserve",
     "incremental": true,
@@ -43,7 +43,7 @@
         "name": "next"
       }
     ],
-    
+
     // Path Mapping
     "baseUrl": ".",
     "paths": {
@@ -54,7 +54,7 @@
       "@/hooks/*": ["./src/hooks/*"],
       "@/styles/*": ["./src/styles/*"]
     },
-    
+
     // Development Experience
     "forceConsistentCasingInFileNames": true,
     "declaration": false,

@@ -1,7 +1,74 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Environment variables that should be available to the client
+  env: {
+    // Custom environment variables can be defined here
+    // They will be available as process.env.VARIABLE_NAME in both server and client
+  },
+
+  // Experimental features
+  experimental: {
+    // Enable experimental features here
+  },
+
+  // External packages that should not be bundled by webpack
+  serverExternalPackages: ['googleapis'],
+
+  // Image optimization
+  images: {
+    // Configure domains for next/image optimization
+    domains: [],
+    // Configure remote patterns for images
+    remotePatterns: [],
+  },
+
+  // Redirects configuration
+  async redirects() {
+    return [
+      // Define any redirects here
+    ];
+  },
+
+  // Headers configuration
+  async headers() {
+    return [
+      {
+        // Apply security headers to all routes
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+        ],
+      },
+    ];
+  },
+
+  // Bundle analyzer configuration
+  ...(process.env.ANALYZE === 'true' && {
+    webpack: (config: any) => {
+      if (process.env.ANALYZE === 'true') {
+        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+        config.plugins.push(
+          new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            openAnalyzer: false,
+          })
+        );
+      }
+      return config;
+    },
+  }),
 };
 
 export default nextConfig;

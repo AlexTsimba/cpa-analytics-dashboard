@@ -2,6 +2,7 @@
   "name": "cpa-analytics-dashboard",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -11,7 +12,13 @@
     "lint:strict": "next lint --max-warnings 0",
     "lint:check": "next lint --quiet",
     "type-check": "tsc --noEmit",
-    "quality": "npm run type-check && npm run lint:strict"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "commitlint": "commitlint --edit",
+    "commitlint:check": "commitlint --from HEAD~1 --to HEAD --verbose",
+    "commitlint:last": "commitlint --last --verbose",
+    "quality": "npm run type-check && npm run lint:strict && npm run format:check && npm run commitlint:last",
+    "prepare": "husky"
   },
   "dependencies": {
     "next": "15.3.3",
@@ -19,8 +26,11 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/jest": "^29.5.14",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -32,7 +42,20 @@
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-unused-imports": "^4.1.4",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "jest-environment-node": "^30.0.0-beta.3",
+    "lint-staged": "^16.1.0",
+    "prettier": "3.5.3",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md}": [
+      "prettier --write"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix --no-warn-ignored"
+    ]
   }
 }

@@ -10,16 +10,22 @@ export interface AppEnvironment {
 }
 
 // Type guards
-export const isPlayerData = (data: unknown): data is import('./index').PlayerData => {
+export const isPlayerData = (
+  data: unknown
+): data is import('./index').PlayerData => {
   return typeof data === 'object' && data !== null && 'playerId' in data;
 };
 
-export const isTrafficData = (data: unknown): data is import('./index').TrafficData => {
-  return typeof data === 'object' && data !== null && 'foreignLandingId' in data;
+export const isTrafficData = (
+  data: unknown
+): data is import('./index').TrafficData => {
+  return (
+    typeof data === 'object' && data !== null && 'foreignLandingId' in data
+  );
 };
 
 // Validation helpers
-export type ValidationResult<T> = 
+export type ValidationResult<T> =
   | { success: true; data: T }
   | { success: false; error: string };
 
