@@ -11,7 +11,7 @@ Use create-next-app to set up a new Next.js 15 project with TypeScript. Configur
 Verify project structure, run TypeScript compiler to check for errors, ensure all scripts (dev, build, start) work correctly. Run Vitest for unit and integration tests with 80% coverage requirement. Execute Playwright tests for end-to-end testing. Verify ESLint/Prettier compliance. Include manual testing instructions for key functionality.
 
 # Subtasks:
-## 1. Initialize Next.js 15 project [pending]
+## 1. Initialize Next.js 15 project [done]
 ### Dependencies: None
 ### Description: Create a new Next.js 15 project using the create-next-app command
 ### Details:

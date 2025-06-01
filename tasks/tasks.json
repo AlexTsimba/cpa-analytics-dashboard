@@ -16,7 +16,7 @@
           "description": "Create a new Next.js 15 project using the create-next-app command",
           "dependencies": [],
           "details": "Use 'npx create-next-app@latest' with the '--typescript' flag to set up a new Next.js 15 project with TypeScript support",
-          "status": "pending"
+          "status": "done"
         },
         {
           "id": 2,
