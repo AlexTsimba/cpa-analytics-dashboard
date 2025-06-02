@@ -16,6 +16,10 @@ on:
 env:
   NODE_VERSION: '18'
   COVERAGE_THRESHOLD: 80
+  # CI Environment Variables
+  NEXT_PUBLIC_APP_URL: 'http://localhost:3000'
+  NODE_ENV: 'test'
+  CI: 'true'
 
 jobs:
   quality-gates:
@@ -165,13 +169,13 @@ jobs:
           npm audit --audit-level=critical
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: javascript
           queries: security-and-quality
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         with:
           category: '/language:javascript'
 

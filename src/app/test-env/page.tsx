@@ -4,6 +4,9 @@
 
 import { getAppConfig } from '@/lib/env';
 
+// Force dynamic rendering to avoid prerendering issues in CI
+export const dynamic = 'force-dynamic';
+
 export default function EnvTestPage() {
   // Test environment variables loading
   const config = getAppConfig();
