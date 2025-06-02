@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -230,21 +232,25 @@ export default function Home() {
         {/* Implementation Status */}
         <Card className="mx-auto max-w-2xl">
           <CardHeader className="text-center">
-            <CardTitle>Dark Mode Implementation Complete</CardTitle>
+            <CardTitle>Analytics Components Ready</CardTitle>
             <CardDescription>
-              Full theme system with light/dark mode switching, system
-              preference detection, and analytics-optimized color schemes for
-              professional dashboards.
+              Custom Shadcn UI components optimized for analytics dashboards
+              with comprehensive theming support.
             </CardDescription>
           </CardHeader>
-          <CardContent className="text-center">
+          <CardContent className="text-center space-y-4">
             <div className="flex justify-center gap-2 flex-wrap">
-              <Badge variant="success">Theme Provider</Badge>
-              <Badge variant="success">Dark Mode</Badge>
-              <Badge variant="success">System Detection</Badge>
-              <Badge variant="info">Components Ready</Badge>
-              <Badge variant="secondary">Next: Customization</Badge>
+              <Badge variant="success">KPI Cards</Badge>
+              <Badge variant="success">Data Tables</Badge>
+              <Badge variant="success">Filter System</Badge>
+              <Badge variant="success">Page Headers</Badge>
+              <Badge variant="info">Theme Ready</Badge>
             </div>
+            <Link href="/components">
+              <Button size="lg" className="w-full sm:w-auto">
+                View Component Showcase →
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
