@@ -36,7 +36,11 @@
     "commit:help": "./scripts/git-semantic.sh examples",
     "commit:validate": "./scripts/git-semantic.sh validate",
     "commit:interactive": "./scripts/git-semantic.sh commit",
-    "git:status": "./scripts/git-semantic.sh status"
+    "git:status": "./scripts/git-semantic.sh status",
+    "pipeline:check": "./scripts/check-pipeline.sh",
+    "pipeline:health": "./scripts/check-pipeline.sh",
+    "deploy:check": "npm run build && npm run test:run && npm run test:e2e",
+    "release:ready": "npm run quality && npm run test:e2e && echo '🚀 Ready for release!'"
   },
   "dependencies": {
     "next": "15.3.3",
