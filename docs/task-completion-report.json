@@ -320,11 +320,7 @@
         }
       },
       "reporting": {
-        "formats": [
-          "console",
-          "json",
-          "html"
-        ],
+        "formats": ["console", "json", "html"],
         "outputDir": "./reports/quality-gates",
         "includeMetrics": true,
         "generateTrends": true
