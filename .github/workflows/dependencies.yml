@@ -81,31 +81,31 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: |
             chore(deps): update dependencies (${{ github.event.inputs.update_type || 'patch' }})
-            
+
             - Updated ${{ github.event.inputs.update_type || 'patch' }} versions
             - All tests passing ✅
             - Build successful ✅
           title: 🔄 Update Dependencies (${{ github.event.inputs.update_type || 'patch' }})
           body: |
             ## 📦 Dependency Updates
-            
+
             This PR updates dependencies to their latest ${{ github.event.inputs.update_type || 'patch' }} versions.
-            
+
             ### ✅ Verification
             - [x] TypeScript compilation successful
             - [x] Linting passed
             - [x] Unit tests passed
             - [x] Build successful
-            
+
             ### 🔍 Changes
             Check the diff for specific version updates.
-            
+
             ### 🚀 Testing
             - [ ] Manual testing completed
             - [ ] E2E tests passed
-            
+
             ---
-            
+
             *This PR was automatically created by the dependency update workflow*
           branch: deps/update-${{ github.event.inputs.update_type || 'patch' }}-${{ github.run_number }}
           delete-branch: true
@@ -134,7 +134,7 @@ jobs:
         run: |
           echo "## Security Audit Results 🔒" >> $GITHUB_STEP_SUMMARY
           npm audit --audit-level=moderate --json > audit.json || true
-          
+
           if [ -s audit.json ]; then
             echo "Security vulnerabilities found:" >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
@@ -160,29 +160,29 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: |
             fix(security): apply automatic security fixes
-            
+
             - Applied npm audit fix
             - Addressed security vulnerabilities
           title: 🔒 Security Updates - Automatic Fixes
           body: |
             ## 🔒 Security Updates
-            
+
             This PR applies automatic security fixes identified by `npm audit`.
-            
+
             ### ⚠️ Important
             Please review changes carefully as automatic fixes may introduce breaking changes.
-            
+
             ### ✅ Actions Taken
             - [x] Ran `npm audit fix --force`
             - [x] Attempted to verify build still works
-            
+
             ### 🧪 Testing Required
             - [ ] Manual testing
             - [ ] E2E tests
             - [ ] Verify all functionality works
-            
+
             ---
-            
+
             *This PR was automatically created by the security update workflow*
           branch: security/auto-fixes-${{ github.run_number }}
           delete-branch: true

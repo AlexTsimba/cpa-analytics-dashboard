@@ -1,71 +1,71 @@
 version: 2
 updates:
   # Enable version updates for npm
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 5
     reviewers:
-      - "AlexTsimba"
+      - 'AlexTsimba'
     assignees:
-      - "AlexTsimba"
+      - 'AlexTsimba'
     commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
+      prefix: 'chore(deps)'
+      include: 'scope'
     labels:
-      - "dependencies"
-      - "automated"
+      - 'dependencies'
+      - 'automated'
     ignore:
       # Ignore major version updates for critical packages
-      - dependency-name: "react"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "next"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: 'react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'next'
+        update-types: ['version-update:semver-major']
     groups:
       # Group React ecosystem updates
       react:
         patterns:
-          - "react*"
-          - "@types/react*"
+          - 'react*'
+          - '@types/react*'
       # Group testing dependencies
       testing:
         patterns:
-          - "*jest*"
-          - "@testing-library/*"
-          - "vitest*"
-          - "playwright*"
+          - '*jest*'
+          - '@testing-library/*'
+          - 'vitest*'
+          - 'playwright*'
       # Group linting/formatting tools
       code-quality:
         patterns:
-          - "eslint*"
-          - "prettier*"
-          - "@typescript-eslint/*"
+          - 'eslint*'
+          - 'prettier*'
+          - '@typescript-eslint/*'
       # Group build tools
       build-tools:
         patterns:
-          - "webpack*"
-          - "babel*"
-          - "postcss*"
-          - "tailwindcss*"
+          - 'webpack*'
+          - 'babel*'
+          - 'postcss*'
+          - 'tailwindcss*'
 
   # Enable version updates for GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 3
     reviewers:
-      - "AlexTsimba"
+      - 'AlexTsimba'
     assignees:
-      - "AlexTsimba"
+      - 'AlexTsimba'
     commit-message:
-      prefix: "chore(actions)"
-      include: "scope"
+      prefix: 'chore(actions)'
+      include: 'scope'
     labels:
-      - "github-actions"
-      - "automated"
+      - 'github-actions'
+      - 'automated'

@@ -1,5 +1,5 @@
 # CodeQL Configuration for CPA Analytics Dashboard
-name: "CodeQL Security Analysis"
+name: 'CodeQL Security Analysis'
 
 disable-default-queries: false
 
