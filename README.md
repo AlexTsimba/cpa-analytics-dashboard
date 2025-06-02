@@ -4,7 +4,9 @@ A modern, responsive analytics dashboard for CPA (Cost Per Action) performance t
 
 ## 🏷️ Badges
 
-[![CI](https://github.com/YOUR_USERNAME/cpa-analytics-dashboard/workflows/CI/CD%20Pipeline/badge.svg)](https://github.com/YOUR_USERNAME/cpa-analytics-dashboard/actions)
+[![CI](https://github.com/AlexTsimba/cpa-analytics-dashboard/workflows/🚀%20CI/CD%20Pipeline/badge.svg)](https://github.com/AlexTsimba/cpa-analytics-dashboard/actions)
+[![Dependencies](https://github.com/AlexTsimba/cpa-analytics-dashboard/workflows/🔄%20Dependency%20Updates/badge.svg)](https://github.com/AlexTsimba/cpa-analytics-dashboard/actions)
+[![Release](https://github.com/AlexTsimba/cpa-analytics-dashboard/workflows/🏷️%20Release%20Management/badge.svg)](https://github.com/AlexTsimba/cpa-analytics-dashboard/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-61dafb.svg)](https://react.dev/)

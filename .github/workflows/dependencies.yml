@@ -1,0 +1,193 @@
+name: 🔄 Dependency Updates
+
+on:
+  schedule:
+    # Run weekly on Mondays at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      update_type:
+        description: 'Type of update'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-dependencies:
+    name: 📦 Update Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 📊 Check for outdated packages
+        run: |
+          npm outdated --json > outdated.json || true
+          echo "## Outdated Dependencies 📦" >> $GITHUB_STEP_SUMMARY
+          if [ -s outdated.json ]; then
+            echo "Found outdated dependencies:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
+            cat outdated.json >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "All dependencies are up to date! ✅" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 🔄 Update patch versions
+        if: github.event.inputs.update_type == 'patch' || github.event_name == 'schedule'
+        run: |
+          npm update --save
+          npm update --save-dev
+
+      - name: 🔄 Update minor versions
+        if: github.event.inputs.update_type == 'minor'
+        run: |
+          npx npm-check-updates -u --target minor
+          npm install
+
+      - name: 🔄 Update major versions
+        if: github.event.inputs.update_type == 'major'
+        run: |
+          npx npm-check-updates -u
+          npm install
+
+      - name: 🧪 Run tests after updates
+        run: |
+          npm run type-check
+          npm run lint:strict
+          npm run test
+          npm run build
+
+      - name: 📝 Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            chore(deps): update dependencies (${{ github.event.inputs.update_type || 'patch' }})
+            
+            - Updated ${{ github.event.inputs.update_type || 'patch' }} versions
+            - All tests passing ✅
+            - Build successful ✅
+          title: 🔄 Update Dependencies (${{ github.event.inputs.update_type || 'patch' }})
+          body: |
+            ## 📦 Dependency Updates
+            
+            This PR updates dependencies to their latest ${{ github.event.inputs.update_type || 'patch' }} versions.
+            
+            ### ✅ Verification
+            - [x] TypeScript compilation successful
+            - [x] Linting passed
+            - [x] Unit tests passed
+            - [x] Build successful
+            
+            ### 🔍 Changes
+            Check the diff for specific version updates.
+            
+            ### 🚀 Testing
+            - [ ] Manual testing completed
+            - [ ] E2E tests passed
+            
+            ---
+            
+            *This PR was automatically created by the dependency update workflow*
+          branch: deps/update-${{ github.event.inputs.update_type || 'patch' }}-${{ github.run_number }}
+          delete-branch: true
+          draft: false
+          labels: |
+            dependencies
+            automated
+            ${{ github.event.inputs.update_type || 'patch' }}
+
+  security-updates:
+    name: 🔒 Security Updates
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 🔒 Run security audit
+        run: |
+          echo "## Security Audit Results 🔒" >> $GITHUB_STEP_SUMMARY
+          npm audit --audit-level=moderate --json > audit.json || true
+          
+          if [ -s audit.json ]; then
+            echo "Security vulnerabilities found:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
+            cat audit.json >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No security vulnerabilities found! ✅" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 🔧 Attempt automatic fixes
+        run: |
+          npm audit fix --force || true
+
+      - name: 🧪 Test after security fixes
+        run: |
+          npm run type-check || echo "Type check failed"
+          npm run test || echo "Tests failed"
+          npm run build || echo "Build failed"
+
+      - name: 📝 Create Security Fix PR
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            fix(security): apply automatic security fixes
+            
+            - Applied npm audit fix
+            - Addressed security vulnerabilities
+          title: 🔒 Security Updates - Automatic Fixes
+          body: |
+            ## 🔒 Security Updates
+            
+            This PR applies automatic security fixes identified by `npm audit`.
+            
+            ### ⚠️ Important
+            Please review changes carefully as automatic fixes may introduce breaking changes.
+            
+            ### ✅ Actions Taken
+            - [x] Ran `npm audit fix --force`
+            - [x] Attempted to verify build still works
+            
+            ### 🧪 Testing Required
+            - [ ] Manual testing
+            - [ ] E2E tests
+            - [ ] Verify all functionality works
+            
+            ---
+            
+            *This PR was automatically created by the security update workflow*
+          branch: security/auto-fixes-${{ github.run_number }}
+          delete-branch: true
+          draft: true
+          labels: |
+            security
+            automated
+            high-priority
