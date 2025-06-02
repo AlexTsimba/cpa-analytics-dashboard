@@ -55,9 +55,9 @@ const nextConfig: NextConfig = {
   },
 
   // Bundle analyzer configuration
-  ...(process.env.ANALYZE === 'true' && {
+  ...(process.env['ANALYZE'] === 'true' && {
     webpack: (config: any) => {
-      if (process.env.ANALYZE === 'true') {
+      if (process.env['ANALYZE'] === 'true') {
         const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
         config.plugins.push(
           new BundleAnalyzerPlugin({
