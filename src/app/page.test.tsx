@@ -12,9 +12,9 @@ describe('Home Page', () => {
 
   it('displays the main heading', () => {
     render(<Home />);
-    const heading = screen.getByRole('heading', { level: 3 });
+    const heading = screen.getByRole('heading', { level: 1 });
     expect(heading).toBeInTheDocument();
-    expect(heading).toHaveTextContent('Environment Variables Test');
+    expect(heading).toHaveTextContent('CPA Analytics Dashboard');
   });
 
   it('has proper semantic structure', () => {

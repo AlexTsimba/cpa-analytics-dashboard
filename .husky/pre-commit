@@ -29,7 +29,7 @@ fi
 # Run ESLint only if there are TS/JS files
 if [ -n "$TS_JS_FILES" ]; then
     echo "🧹 ESLint check..."
-    if ! npx eslint $TS_JS_FILES --max-warnings 0 --quiet; then
+    if ! npx eslint $TS_JS_FILES --max-warnings 0 --quiet --no-warn-ignored; then
         echo "❌ ESLint found issues"
         echo "Run 'npm run lint:fix' to auto-fix issues"
         exit 1
