@@ -1,1 +1,83 @@
-npx lint-staged
+#!/bin/sh
+
+# Quality Gates Pre-Commit Hook
+# Runs essential quality checks before allowing commit
+
+echo "🔍 Running Quality Gates Pre-Commit Checks..."
+
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$STAGED_FILES" ]; then
+    echo "✅ No staged files to check"
+    exit 0
+fi
+
+echo "📁 Checking $(echo "$STAGED_FILES" | wc -l) staged files..."
+
+# Check if there are TypeScript/JavaScript files
+TS_JS_FILES=$(echo "$STAGED_FILES" | grep -E '\.(ts|tsx|js|jsx)$' || true)
+
+# Always run TypeScript compilation if there are any relevant files
+echo "🔧 TypeScript compilation..."
+if ! npm run type-check > /dev/null 2>&1; then
+    echo "❌ TypeScript compilation failed"
+    echo "Run 'npm run type-check' to see details"
+    exit 1
+fi
+
+# Run ESLint only if there are TS/JS files
+if [ -n "$TS_JS_FILES" ]; then
+    echo "🧹 ESLint check..."
+    if ! npx eslint $TS_JS_FILES --max-warnings 0 --quiet; then
+        echo "❌ ESLint found issues"
+        echo "Run 'npm run lint:fix' to auto-fix issues"
+        exit 1
+    fi
+
+    echo "💅 Prettier check..."
+    if ! npx prettier --check $TS_JS_FILES > /dev/null 2>&1; then
+        echo "❌ Code formatting issues found"
+        echo "Run 'npm run format' to fix formatting"
+        exit 1
+    fi
+else
+    echo "🧹 ESLint check: ✅ No TS/JS files to check"
+    echo "💅 Prettier check: ✅ No TS/JS files to check"
+fi
+
+# Always run tests
+echo "🧪 Running tests..."
+if ! npm run test:run --silent > /dev/null 2>&1; then
+    echo "❌ Tests failed"
+    echo "Run 'npm run test' to see details"
+    exit 1
+fi
+
+# Quick build check (only if src files changed)
+SRC_CHANGED=$(echo "$STAGED_FILES" | grep "^src/" | wc -l)
+if [ "$SRC_CHANGED" -gt 0 ]; then
+    echo "🏗️  Quick build verification..."
+    if ! npm run build > /dev/null 2>&1; then
+        echo "❌ Build failed"
+        echo "Run 'npm run build' to see details"
+        exit 1
+    fi
+    echo "   - Build: ✅ Build successful"
+else
+    echo "🏗️  Build check: ✅ No src files changed"
+fi
+
+echo "✅ All pre-commit quality gates passed!"
+echo "📊 Quality summary:"
+echo "   - TypeScript: ✅ No compilation errors"
+if [ -n "$TS_JS_FILES" ]; then
+    echo "   - ESLint: ✅ No linting issues"
+    echo "   - Prettier: ✅ Code properly formatted"
+else
+    echo "   - ESLint: ✅ No TS/JS files to check"
+    echo "   - Prettier: ✅ No TS/JS files to check"
+fi
+echo "   - Tests: ✅ All tests passing"
+
+exit 0

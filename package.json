@@ -40,7 +40,17 @@
     "pipeline:check": "./scripts/check-pipeline.sh",
     "pipeline:health": "./scripts/check-pipeline.sh",
     "deploy:check": "npm run build && npm run test:run && npm run test:e2e",
-    "release:ready": "npm run quality && npm run test:e2e && echo '🚀 Ready for release!'"
+    "release:ready": "npm run quality && npm run test:e2e && echo '🚀 Ready for release!'",
+    "quality:gates": "./scripts/quality-gates.sh",
+    "quality:gates:env": "./scripts/quality-gates.sh env",
+    "quality:gates:deps": "./scripts/quality-gates.sh deps",
+    "quality:gates:code": "./scripts/quality-gates.sh quality",
+    "quality:gates:test": "./scripts/quality-gates.sh test",
+    "quality:gates:build": "./scripts/quality-gates.sh build",
+    "quality:gates:git": "./scripts/quality-gates.sh git",
+    "quality:gates:perf": "./scripts/quality-gates.sh perf",
+    "quality:gates:security": "./scripts/quality-gates.sh security",
+    "quality:full": "npm run quality:gates && npm run test:e2e"
   },
   "dependencies": {
     "next": "15.3.3",

@@ -1,0 +1,87 @@
+{
+  "qualityGates": {
+    "coverage": {
+      "threshold": 80,
+      "enforceOnCI": true,
+      "excludePatterns": [
+        "**/*.test.*",
+        "**/*.spec.*",
+        "**/test-utils.*",
+        "**/mocks/**",
+        "**/__mocks__/**"
+      ]
+    },
+    "linting": {
+      "maxWarnings": 0,
+      "enforceStrict": true,
+      "rules": {
+        "typescript": true,
+        "prettier": true,
+        "eslint": true,
+        "unusedImports": true
+      }
+    },
+    "testing": {
+      "minimumTests": 5,
+      "requireE2E": true,
+      "testFileRatio": 50,
+      "enforceTestNaming": true
+    },
+    "build": {
+      "maxBuildTime": 300,
+      "maxBundleSize": "5MB",
+      "enforceTreeShaking": true,
+      "checkBuildWarnings": true
+    },
+    "security": {
+      "auditLevel": "moderate",
+      "blockHighVulnerabilities": true,
+      "checkHardcodedSecrets": true,
+      "enforceHttps": true
+    },
+    "performance": {
+      "lighthouse": {
+        "performance": 90,
+        "accessibility": 95,
+        "bestPractices": 90,
+        "seo": 90
+      },
+      "bundleAnalysis": true,
+      "checkAntiPatterns": true
+    },
+    "git": {
+      "conventionalCommits": true,
+      "branchNaming": "feature/*|bugfix/*|hotfix/*|release/*",
+      "requireLinearHistory": false,
+      "maxCommitSize": 50
+    },
+    "environment": {
+      "nodeVersion": ">=18.0.0",
+      "npmVersion": ">=8.0.0",
+      "requiredFiles": [
+        "package.json",
+        "tsconfig.json",
+        ".gitignore",
+        "README.md"
+      ]
+    }
+  },
+  "reporting": {
+    "formats": ["console", "json", "html"],
+    "outputDir": "./reports/quality-gates",
+    "includeMetrics": true,
+    "generateTrends": true
+  },
+  "integrations": {
+    "github": {
+      "updateCommitStatus": true,
+      "createPRComments": true,
+      "blockMergeOnFailure": true
+    },
+    "slack": {
+      "enabled": false,
+      "webhook": "",
+      "notifyOnFailure": true
+    }
+  }
+}

@@ -1,2 +1,53 @@
-# Run quality checks before pushing
-npm run quality
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Quality Gates Pre-Push Hook
+# Comprehensive quality verification before pushing to remote
+
+echo "🚀 Running Quality Gates Pre-Push Verification..."
+
+# Check if we're pushing to protected branches
+protected_branch='main\|master\|develop'
+current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+
+if echo "$current_branch" | grep -qE "$protected_branch"; then
+    echo "🔒 Pushing to protected branch: $current_branch"
+    echo "🔍 Running comprehensive quality gates..."
+    
+    # Run full quality gates suite
+    if ! npm run quality:gates; then
+        echo "❌ Quality gates failed for protected branch"
+        echo "All quality gates must pass before pushing to $current_branch"
+        exit 1
+    fi
+    
+    # Additional checks for protected branches
+    echo "🧪 Running full test suite..."
+    if ! npm run test:coverage; then
+        echo "❌ Test coverage requirements not met"
+        exit 1
+    fi
+    
+    echo "🏗️  Verifying production build..."
+    if ! npm run build; then
+        echo "❌ Production build failed"
+        exit 1
+    fi
+    
+    echo "✅ All quality gates passed for protected branch!"
+else
+    echo "📝 Pushing to feature branch: $current_branch"
+    echo "🔍 Running standard quality checks..."
+    
+    # Run standard quality checks for feature branches
+    if ! npm run quality; then
+        echo "❌ Quality checks failed"
+        echo "Fix issues before pushing"
+        exit 1
+    fi
+    
+    echo "✅ Quality checks passed for feature branch!"
+fi
+
+echo "🎉 Ready to push!"
+exit 0
