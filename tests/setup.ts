@@ -56,7 +56,7 @@ declare global {
   };
 }
 
-global.testUtils = {
+(globalThis as any).testUtils = {
   // Add any global test utilities here
   createMockProps: (overrides = {}) => ({
     ...overrides,

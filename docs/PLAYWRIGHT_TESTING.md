@@ -18,7 +18,7 @@ Playwright is configured to provide comprehensive E2E testing across multiple br
 
 The main configuration file includes:
 
-- **Test directory**: `./e2e` 
+- **Test directory**: `./e2e`
 - **Timeout settings**: 30s for tests, 10s for assertions
 - **Parallel execution**: Enabled for faster test runs
 - **Retry strategy**: 2 retries on CI, 0 locally
@@ -107,16 +107,19 @@ PLAYWRIGHT_BASE_URL=http://localhost:3001 npx playwright test
 The test suite uses Page Object Model pattern for maintainability:
 
 ### DashboardPage
+
 - Navigation methods
 - Loading state verification
 - Content validation
 
 ### EnvironmentTestPage
+
 - Component interaction methods
 - Button click handling
 - Alert dialog management
 
 ### TestUtils
+
 - Screenshot utilities
 - Console monitoring
 - Network request waiting

@@ -29,8 +29,10 @@ const eslintConfig = [
   },
 
   // Base Next.js configuration with enhanced rules
-  ...compat.config({
-    extends: ['next/core-web-vitals', 'next/typescript', 'prettier'],
+  ...compat.extends('next/core-web-vitals'),
+  ...compat.extends('next/typescript'),
+  ...compat.extends('prettier'),
+  {
     rules: {
       // TypeScript specific rules
       '@typescript-eslint/no-unused-vars': [
@@ -96,7 +98,7 @@ const eslintConfig = [
       'jsx-a11y/heading-has-content': 'error',
       'jsx-a11y/iframe-has-title': 'error',
     },
-  }),
+  },
 
   // Configuration for test files
   {

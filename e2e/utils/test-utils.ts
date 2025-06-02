@@ -2,7 +2,7 @@ import { Page, Locator, expect } from '@playwright/test';
 
 /**
  * E2E Test Utilities for CPA Analytics Dashboard
- * 
+ *
  * This file contains utility functions and page object models
  * to simplify E2E test writing and improve maintainability.
  */
@@ -34,10 +34,10 @@ export class DashboardPage {
   async waitForLoad() {
     // Wait for main content to be visible
     await this.mainContent.waitFor({ state: 'visible' });
-    
+
     // Wait for any loading states to complete
     await this.page.waitForLoadState('networkidle');
-    
+
     // If there's a loading spinner, wait for it to disappear
     if (await this.loadingSpinner.isVisible()) {
       await this.loadingSpinner.waitFor({ state: 'hidden' });
@@ -63,7 +63,9 @@ export class EnvironmentTestPage {
     this.page = page;
     this.container = page.locator('.p-4.border.rounded-lg');
     this.title = page.locator('h3', { hasText: 'Environment Variables Test' });
-    this.testButton = page.locator('button', { hasText: 'Test Environment Variables' });
+    this.testButton = page.locator('button', {
+      hasText: 'Test Environment Variables',
+    });
   }
 
   /**
@@ -137,7 +139,7 @@ export class TestUtils {
    */
   static setupConsoleMonitoring(page: Page) {
     const errors: string[] = [];
-    
+
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         errors.push(msg.text());
@@ -172,7 +174,7 @@ export class DashboardAssertions {
    */
   static async verifyTheme(page: Page, theme: 'light' | 'dark' = 'light') {
     const body = page.locator('body');
-    
+
     if (theme === 'dark') {
       await expect(body).toHaveClass(/dark/);
     } else {
@@ -187,15 +189,15 @@ export class DashboardAssertions {
     // Test mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
     await page.waitForTimeout(500); // Allow time for responsive changes
-    
+
     const mainContent = page.locator('main');
     await expect(mainContent).toBeVisible();
-    
+
     // Test tablet viewport
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.waitForTimeout(500);
     await expect(mainContent).toBeVisible();
-    
+
     // Test desktop viewport
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.waitForTimeout(500);

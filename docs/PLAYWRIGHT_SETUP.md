@@ -18,7 +18,7 @@ Playwright is configured to provide comprehensive E2E testing across multiple br
 
 The main configuration file includes:
 
-- **Test directory**: `./e2e` 
+- **Test directory**: `./e2e`
 - **Timeout settings**: 30s for tests, 10s for assertions
 - **Parallel execution**: Enabled for faster test runs
 - **Retry strategy**: 2 retries on CI, 0 locally
@@ -107,16 +107,19 @@ PLAYWRIGHT_BASE_URL=http://localhost:3001 npx playwright test
 The test suite uses Page Object Model pattern for maintainability:
 
 ### DashboardPage
+
 - Navigation methods
 - Loading state verification
 - Common dashboard interactions
 
 ### EnvironmentTestPage
+
 - Environment test page interactions
 - Button click handling
 - Component verification
 
 ### TestUtils
+
 - Screenshot utilities
 - Console monitoring
 - Network request waiting
@@ -209,8 +212,8 @@ await TestUtils.waitForNetworkRequest(page, '/api/data');
 
 ```typescript
 // Wait for loading states
-await page.waitForFunction(() => 
-  !document.querySelector('[data-testid="loading"]')
+await page.waitForFunction(
+  () => !document.querySelector('[data-testid="loading"]')
 );
 
 // Wait for text content
@@ -225,7 +228,7 @@ test('should work across browsers', async ({ page, browserName }) => {
   if (browserName === 'webkit') {
     // Safari-specific handling
   }
-  
+
   await TestUtils.takeScreenshot(page, `test-${browserName}`);
 });
 ```
