@@ -4,10 +4,10 @@
 
 We support security updates for the following versions:
 
-| Version | Supported          |
-| ------- | ------------------ |
-| Latest  | :white_check_mark: |
-| < Latest| :x:               |
+| Version  | Supported          |
+| -------- | ------------------ |
+| Latest   | :white_check_mark: |
+| < Latest | :x:                |
 
 ## Reporting a Vulnerability
 
@@ -44,6 +44,7 @@ Send a detailed report to [security@cpa-dashboard.dev](mailto:security@cpa-dashb
 Our application includes the following security measures:
 
 ### Code Security
+
 - ✅ CodeQL static analysis scanning
 - ✅ Dependency vulnerability scanning (npm audit)
 - ✅ Secret detection with TruffleHog
@@ -51,6 +52,7 @@ Our application includes the following security measures:
 - ✅ OSSF Scorecard assessment
 
 ### Development Security
+
 - ✅ TypeScript strict mode enabled
 - ✅ ESLint security rules
 - ✅ Automated security testing in CI/CD
@@ -58,6 +60,7 @@ Our application includes the following security measures:
 - ✅ Minimal permissions in GitHub Actions
 
 ### Infrastructure Security
+
 - ✅ Secure environment variable handling
 - ✅ HTTPS enforcement
 - ✅ Security headers configuration
@@ -69,18 +72,21 @@ Our application includes the following security measures:
 When contributing to this project, please follow these security guidelines:
 
 ### Code Security
+
 1. **Never commit secrets**: Use environment variables for sensitive data
 2. **Validate input**: Always validate and sanitize user input
 3. **Use secure dependencies**: Keep dependencies updated and audit regularly
 4. **Follow TypeScript strict mode**: Enable all strict type checking options
 
 ### GitHub Actions Security
+
 1. **Pin action versions**: Always use commit SHA for third-party actions
 2. **Minimal permissions**: Use least privilege principle for workflow permissions
 3. **Secure artifact handling**: Be careful with artifact uploads/downloads
 4. **Environment separation**: Use proper environment protection rules
 
 ### General Guidelines
+
 1. **Code review**: All code changes require review
 2. **Testing**: Include security tests for new features
 3. **Documentation**: Document security-relevant changes
@@ -97,6 +103,7 @@ This repository automatically scans for:
 - **Supply chain security** (OSSF Scorecard)
 
 Scans run:
+
 - On every push to main branches
 - On every pull request
 - Daily at 2 AM UTC (scheduled)

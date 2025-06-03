@@ -23,20 +23,20 @@ jobs:
   dependency-scan:
     name: Dependency Vulnerability Scan
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v4.3.6
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Run npm audit
         run: |
           echo "## 🔍 NPM Audit Results" >> $GITHUB_STEP_SUMMARY
@@ -46,7 +46,7 @@ jobs:
             echo "⚠️ Vulnerabilities detected - see details below" >> $GITHUB_STEP_SUMMARY
             npm audit --audit-level=moderate || true
           fi
-          
+
       - name: Upload audit results
         uses: actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029 # v4.5.0
         if: always()
@@ -58,51 +58,51 @@ jobs:
   codeql-analysis:
     name: CodeQL Security Analysis
     runs-on: ubuntu-latest
-    
+
     strategy:
       fail-fast: false
       matrix:
         language: ['javascript-typescript']
-        
+
     steps:
       - name: Checkout code
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v4.3.6
-        
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@6db8d6351fd0be61f9ed8ebd12ccd35dcec51fea # v3.26.11
         with:
           languages: ${{ matrix.language }}
           queries: +security-extended,security-and-quality
-          
+
       - name: Setup Node.js for CodeQL
         uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Build for CodeQL
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: '1'
-          
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@6db8d6351fd0be61f9ed8ebd12ccd35dcec51fea # v3.26.11
         with:
-          category: "/language:${{matrix.language}}"
+          category: '/language:${{matrix.language}}'
 
   secret-scanning:
     name: Secret Detection
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v4.3.6
         with:
           fetch-depth: 0 # Full history for secret scanning
-          
+
       - name: Run TruffleHog OSS
         uses: trufflesecurity/trufflehog@3f01a62b7c2ae8b22c0b9b7c7b888c48df2b4e15 # v3.91.0
         with:
@@ -110,7 +110,7 @@ jobs:
           base: main
           head: HEAD
           extra_args: --debug --only-verified
-          
+
       - name: Secret scanning summary
         run: |
           echo "## 🔒 Secret Scanning Complete" >> $GITHUB_STEP_SUMMARY
@@ -121,25 +121,25 @@ jobs:
     name: Container Security Scan
     runs-on: ubuntu-latest
     if: contains(fromJSON('["push", "schedule"]'), github.event_name)
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v4.3.6
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Build project
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: '1'
-          
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@a20de5420d57c4102486cdd9578b45609c99d7eb # v0.26.0
         with:
@@ -147,7 +147,7 @@ jobs:
           scan-ref: '.'
           format: 'sarif'
           output: 'trivy-results.sarif'
-          
+
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@6db8d6351fd0be61f9ed8ebd12ccd35dcec51fea # v3.26.11
         if: always()
@@ -158,26 +158,26 @@ jobs:
     name: OSSF Scorecard
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/master')
-    
+
     permissions:
       security-events: write
       id-token: write
       actions: read
       contents: read
-      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v4.3.6
         with:
           persist-credentials: false
-          
+
       - name: Run analysis
         uses: ossf/scorecard-action@dc50aa9510b46c811795eb24b2f1ba02a914e534 # v2.4.0
         with:
           results_file: results.sarif
           results_format: sarif
           publish_results: true
-          
+
       - name: Upload to code-scanning
         uses: github/codeql-action/upload-sarif@6db8d6351fd0be61f9ed8ebd12ccd35dcec51fea # v3.26.11
         with:
@@ -188,7 +188,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [dependency-scan, codeql-analysis, secret-scanning]
     if: always()
-    
+
     steps:
       - name: Security Summary
         run: |
@@ -201,7 +201,7 @@ jobs:
           echo "| Secret Detection | ${{ needs.secret-scanning.result == 'success' && '✅ Passed' || '❌ Failed' }} | TruffleHog secret scanning |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Scan completed at**: $(date -u)" >> $GITHUB_STEP_SUMMARY
-          
+
           if [[ "${{ needs.dependency-scan.result }}" == "success" && "${{ needs.codeql-analysis.result }}" == "success" && "${{ needs.secret-scanning.result }}" == "success" ]]; then
             echo "🎉 **All security scans passed successfully!**" >> $GITHUB_STEP_SUMMARY
           else

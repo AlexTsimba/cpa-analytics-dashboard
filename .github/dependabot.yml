@@ -1,80 +1,80 @@
 version: 2
 updates:
   # Enable version updates for npm
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 10
     reviewers:
-      - "AlexTsimba"
+      - 'AlexTsimba'
     assignees:
-      - "AlexTsimba"
+      - 'AlexTsimba'
     commit-message:
-      prefix: "chore"
-      prefix-development: "chore"
-      include: "scope"
+      prefix: 'chore'
+      prefix-development: 'chore'
+      include: 'scope'
     labels:
-      - "dependencies"
-      - "security"
+      - 'dependencies'
+      - 'security'
     # Group all patch updates into a single PR
     groups:
       patch-updates:
         patterns:
-          - "*"
+          - '*'
         update-types:
-          - "patch"
+          - 'patch'
       # Group all minor updates into a single PR
       minor-updates:
         patterns:
-          - "*"
+          - '*'
         update-types:
-          - "minor"
+          - 'minor'
     # Immediately update security vulnerabilities
     versioning-strategy: increase
-    target-branch: "master"
+    target-branch: 'master'
 
   # Enable version updates for GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 5
     reviewers:
-      - "AlexTsimba"
+      - 'AlexTsimba'
     assignees:
-      - "AlexTsimba"
+      - 'AlexTsimba'
     commit-message:
-      prefix: "ci"
-      include: "scope"
+      prefix: 'ci'
+      include: 'scope'
     labels:
-      - "github-actions"
-      - "security"
+      - 'github-actions'
+      - 'security'
     # Group GitHub Actions updates
     groups:
       github-actions:
         patterns:
-          - "*"
+          - '*'
 
   # Enable version updates for Docker
-  - package-ecosystem: "docker"
-    directory: "/"
+  - package-ecosystem: 'docker'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 3
     reviewers:
-      - "AlexTsimba"
+      - 'AlexTsimba'
     assignees:
-      - "AlexTsimba"
+      - 'AlexTsimba'
     commit-message:
-      prefix: "docker"
-      include: "scope"
+      prefix: 'docker'
+      include: 'scope'
     labels:
-      - "docker"
-      - "security"
+      - 'docker'
+      - 'security'
