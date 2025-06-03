@@ -93,10 +93,25 @@ jobs:
         run: npm ci
 
       - name: Run security audit
-        run: npm audit --audit-level=critical || true
+        run: |
+          echo "## 🔍 Security Audit Results" >> $GITHUB_STEP_SUMMARY
+          if npm audit --audit-level=high --json > audit-results.json 2>/dev/null; then
+            echo "✅ No high/critical vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ High/critical vulnerabilities detected:" >> $GITHUB_STEP_SUMMARY
+            npm audit --audit-level=high --json | jq -r '.vulnerabilities | to_entries[] | "- \(.key): \(.value.severity)"' || true
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Run \`npm audit fix\` to address these issues" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
 
-      # CodeQL removed due to conflict with GitHub's default setup
-      # TODO: Either disable GitHub's default CodeQL or configure this properly
+      - name: Upload audit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-audit-results
+          path: audit-results.json
+          retention-days: 30
 
   e2e-tests:
     name: End-to-End Tests
