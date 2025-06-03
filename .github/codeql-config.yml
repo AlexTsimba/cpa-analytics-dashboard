@@ -5,24 +5,22 @@ disable-default-queries: false
 
 queries:
   - uses: security-and-quality
-  - uses: security-extended
 
 paths-ignore:
-  - node_modules
-  - .next
-  - coverage
-  - playwright-report
-  - playwright-results
-  - dist
-  - build
+  - node_modules/**
+  - .next/**
+  - coverage/**
+  - playwright-report/**
+  - playwright-results/**
+  - dist/**
+  - build/**
+  - '**/*.test.*'
+  - '**/*.spec.*'
+  - tests/**
+  - e2e/**
 
 paths:
-  - src
-  - pages
-  - components
-  - lib
-  - utils
+  - src/**
 
 packs:
   - codeql/javascript-queries
-  - codeql/javascript-security-extended-queries

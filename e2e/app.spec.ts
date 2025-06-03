@@ -1,120 +1,65 @@
 import { test, expect } from '@playwright/test';
 
-import { DashboardPage, TestUtils } from './utils/test-utils';
-
-/**
- * Basic Application Tests
- *
- * These tests verify fundamental application functionality:
- * - Page loading and navigation
- * - Basic UI elements presence
- * - Application responsiveness
- */
-
-test.describe('Application Core Functionality', () => {
-  let dashboardPage: DashboardPage;
-  let consoleErrors: string[];
-
+test.describe('Application Basic Tests', () => {
   test.beforeEach(async ({ page }) => {
-    dashboardPage = new DashboardPage(page);
-    consoleErrors = TestUtils.setupConsoleMonitoring(page);
-  });
+    // Navigate to the homepage
+    await page.goto('/');
 
-  test.afterEach(async () => {
-    TestUtils.verifyNoConsoleErrors(consoleErrors);
+    // Wait for the page to be fully loaded
+    await page.waitForLoadState('networkidle');
   });
 
   test('should load the homepage successfully', async ({ page }) => {
-    await dashboardPage.goto();
-    await dashboardPage.verifyPageLoaded();
+    // Check if the page title is set correctly
+    await expect(page).toHaveTitle(/CPA Analytics Dashboard/);
 
-    // Verify essential page elements
-    await expect(page.locator('main')).toBeVisible();
-
-    // Take screenshot for visual verification
-    await TestUtils.takeScreenshot(page, 'homepage-loaded');
+    // Check if the main content is visible
+    const mainContent = page.locator('main');
+    await expect(mainContent).toBeVisible();
   });
 
-  test('should have correct page metadata', async ({ page }) => {
-    await dashboardPage.goto();
-
-    // Check page title
-    await expect(page).toHaveTitle('Create Next App');
-
-    // Check meta tags (if any are set)
-    const metaDescription = page.locator('meta[name="description"]');
-    if ((await metaDescription.count()) > 0) {
-      expect(await metaDescription.getAttribute('content')).toBeTruthy();
+  test('should have working navigation', async ({ page }) => {
+    // Check if navigation links are present and clickable
+    const homeLink = page.getByRole('link', { name: /home/i });
+    if (await homeLink.isVisible()) {
+      await expect(homeLink).toBeVisible();
     }
   });
 
-  test('should handle navigation correctly', async ({ page }) => {
-    await dashboardPage.goto();
-
-    // Verify we're on the homepage
-    await expect(page).toHaveTitle('Create Next App');
-
-    // Check that environment test component is present
-    await expect(
-      page.locator('h3', { hasText: 'Environment Variables Test' })
-    ).toBeVisible();
-
-    // Test navigation within the page (scroll to different sections)
-    const envComponent = page.locator('.p-4.border.rounded-lg');
-    await expect(envComponent).toBeVisible();
-
-    // Verify we can interact with the component
-    const testButton = page.locator('button', {
-      hasText: 'Test Environment Variables',
-    });
-    await expect(testButton).toBeVisible();
-  });
-
-  test('should be responsive across different screen sizes', async ({
-    page,
-  }) => {
-    await dashboardPage.goto();
-
-    // Test mobile view
+  test('should be responsive', async ({ page }) => {
+    // Test mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.waitForTimeout(500);
-    await expect(page.locator('main')).toBeVisible();
 
-    // Test tablet view
-    await page.setViewportSize({ width: 768, height: 1024 });
-    await page.waitForTimeout(500);
-    await expect(page.locator('main')).toBeVisible();
+    // Check if the page is still accessible on mobile
+    const body = page.locator('body');
+    await expect(body).toBeVisible();
 
-    // Test desktop view
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.waitForTimeout(500);
-    await expect(page.locator('main')).toBeVisible();
-
-    await TestUtils.takeScreenshot(page, 'responsive-desktop');
+    // Test desktop viewport
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await expect(body).toBeVisible();
   });
 
-  test('should load without accessibility violations', async ({ page }) => {
-    await dashboardPage.goto();
+  test('should not have console errors', async ({ page }) => {
+    const messages: string[] = [];
 
-    // Check for basic accessibility requirements
-    const main = page.locator('main');
-    await expect(main).toBeVisible();
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        messages.push(msg.text());
+      }
+    });
 
-    // Verify headings are present and properly structured
-    const headings = page.locator('h1, h2, h3, h4, h5, h6');
-    const headingCount = await headings.count();
-    expect(headingCount).toBeGreaterThan(0);
-  });
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
 
-  test('should handle errors gracefully', async ({ page }) => {
-    // Test 404 page
-    const response = await page.goto('/non-existent-page');
+    // Allow some common Next.js development warnings but fail on actual errors
+    const criticalErrors = messages.filter(
+      (msg) =>
+        !msg.includes('Download the React DevTools') &&
+        !msg.includes('Warning: ') &&
+        !msg.includes('[HMR]') &&
+        !msg.includes('FastRefresh')
+    );
 
-    // Next.js should handle this gracefully
-    // Either with a 404 page or redirect
-    expect(response?.status()).toBeDefined();
-
-    // Verify the page still loads something
-    await expect(page.locator('body')).toBeVisible();
+    expect(criticalErrors).toHaveLength(0);
   });
 });

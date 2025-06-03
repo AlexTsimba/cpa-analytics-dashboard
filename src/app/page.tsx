@@ -1,109 +1,259 @@
-import Image from 'next/image';
+import Link from 'next/link';
 
-import EnvTestComponent from '@/components/debug/EnvTestComponent';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-
-        {/* Environment Variables Test Component */}
-        <EnvTestComponent />
-
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{' '}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main className="min-h-screen bg-background p-6">
+      <div className="mx-auto max-w-7xl space-y-8">
+        {/* Header with Theme Toggle */}
+        <div className="flex items-center justify-between">
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-bold text-foreground">
+              CPA Analytics Dashboard
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-4">
+              Professional analytics dashboard with Shadcn UI theming system.
+              Now featuring dynamic dark/light mode switching.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Theme:</span>
+            <ThemeToggle />
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* Theme Demo Section */}
+        <Card className="mx-auto max-w-4xl">
+          <CardHeader className="text-center">
+            <CardTitle>🌙 Dark Mode Implementation</CardTitle>
+            <CardDescription>
+              Dynamic theme switching with system preference detection. Try the
+              theme toggle in the top-right corner!
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <h4 className="font-semibold">✅ Features Implemented:</h4>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• next-themes integration</li>
+                  <li>• System preference detection</li>
+                  <li>• Smooth theme transitions</li>
+                  <li>• Hydration safe rendering</li>
+                  <li>• Professional color schemes</li>
+                </ul>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-semibold">🎨 Theme Features:</h4>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• Light & dark color palettes</li>
+                  <li>• Analytics-optimized colors</li>
+                  <li>• Accessible contrast ratios</li>
+                  <li>• Chart color coordination</li>
+                  <li>• Custom scrollbar styling</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Component Showcase */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Button Variants Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Button Components</CardTitle>
+              <CardDescription>
+                Buttons in both light and dark themes
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm">Small</Button>
+                <Button>Default</Button>
+                <Button size="lg">Large</Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="secondary">Secondary</Button>
+                <Button variant="outline">Outline</Button>
+                <Button variant="ghost">Ghost</Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Badge Variants Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Status Indicators</CardTitle>
+              <CardDescription>Theme-aware badge components</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                <Badge>Default</Badge>
+                <Badge variant="secondary">Secondary</Badge>
+                <Badge variant="outline">Outline</Badge>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="success">Success</Badge>
+                <Badge variant="warning">Warning</Badge>
+                <Badge variant="destructive">Error</Badge>
+                <Badge variant="info">Info</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* KPI Metrics Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Analytics Metrics</CardTitle>
+              <CardDescription>
+                Dark theme optimized metrics display
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Revenue</span>
+                  <span className="text-kpi text-trend-positive">+12.5%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Conversions
+                  </span>
+                  <span className="text-kpi text-trend-positive">+8.3%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Cost per Click
+                  </span>
+                  <span className="text-kpi text-trend-negative">-5.1%</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Dark Theme Colors Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Theme Colors</CardTitle>
+              <CardDescription>
+                Adaptive color system for both themes
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="h-12 bg-primary rounded-md flex items-center justify-center">
+                  <span className="text-primary-foreground text-xs font-medium">
+                    Primary
+                  </span>
+                </div>
+                <div className="h-12 bg-secondary rounded-md flex items-center justify-center">
+                  <span className="text-secondary-foreground text-xs font-medium">
+                    Secondary
+                  </span>
+                </div>
+                <div className="h-12 bg-success rounded-md flex items-center justify-center">
+                  <span className="text-success-foreground text-xs font-medium">
+                    Success
+                  </span>
+                </div>
+                <div className="h-12 bg-warning rounded-md flex items-center justify-center">
+                  <span className="text-warning-foreground text-xs font-medium">
+                    Warning
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Card Backgrounds Demo */}
+          <Card className="bg-card border-border">
+            <CardHeader>
+              <CardTitle>Card Backgrounds</CardTitle>
+              <CardDescription>
+                Adaptive card styling in current theme
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="p-3 bg-muted rounded-md">
+                  <span className="text-muted-foreground text-sm">
+                    Muted background
+                  </span>
+                </div>
+                <div className="p-3 bg-accent rounded-md">
+                  <span className="text-accent-foreground text-sm">
+                    Accent background
+                  </span>
+                </div>
+                <div className="p-3 border rounded-md">
+                  <span className="text-foreground text-sm">
+                    Border styling
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Interactive Elements Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Interactive States</CardTitle>
+              <CardDescription>
+                Theme-aware hover and focus states
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Button className="w-full" variant="default">
+                  Primary Action
+                </Button>
+                <Button className="w-full" variant="outline">
+                  Secondary Action
+                </Button>
+                <Button className="w-full" variant="destructive">
+                  Destructive Action
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Implementation Status */}
+        <Card className="mx-auto max-w-2xl">
+          <CardHeader className="text-center">
+            <CardTitle>Analytics Components Ready</CardTitle>
+            <CardDescription>
+              Custom Shadcn UI components optimized for analytics dashboards
+              with comprehensive theming support.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <div className="flex justify-center gap-2 flex-wrap">
+              <Badge variant="success">KPI Cards</Badge>
+              <Badge variant="success">Data Tables</Badge>
+              <Badge variant="success">Filter System</Badge>
+              <Badge variant="success">Page Headers</Badge>
+              <Badge variant="info">Theme Ready</Badge>
+            </div>
+            <Link href="/components">
+              <Button size="lg" className="w-full sm:w-auto">
+                View Component Showcase →
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    </main>
   );
 }

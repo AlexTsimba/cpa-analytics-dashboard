@@ -1,0 +1,112 @@
+# Quality Gates Configuration for CPA Analytics Dashboard
+# This file defines thresholds and checks for maintaining code quality
+
+version: '1.0'
+
+# Environment Requirements
+environment:
+  node_version: '18'
+  npm_version: '>=9.0.0'
+
+# Code Quality Thresholds
+code_quality:
+  # TypeScript compilation
+  type_check:
+    enabled: true
+    strict: true
+
+  # ESLint configuration
+  linting:
+    enabled: true
+    max_warnings: 0
+    strict_mode: true
+
+  # Prettier formatting
+  formatting:
+    enabled: true
+    check_only: true
+
+# Testing Requirements
+testing:
+  # Unit test coverage thresholds
+  unit_tests:
+    enabled: true
+    coverage:
+      statements: 80
+      branches: 80
+      functions: 80
+      lines: 80
+
+  # Integration tests
+  integration_tests:
+    enabled: true
+    timeout: 30000
+
+  # End-to-end tests
+  e2e_tests:
+    enabled: true
+    timeout: 60000
+    browsers: ['chromium']
+
+# Build Requirements
+build:
+  # Next.js build
+  nextjs:
+    enabled: true
+    strict: true
+    output: 'standalone'
+
+  # Bundle analysis
+  bundle:
+    max_size: '5MB'
+    check_duplicates: true
+
+# Security Requirements
+security:
+  # Dependency audit
+  audit:
+    enabled: true
+    level: 'critical'
+    auto_fix: false
+
+  # CodeQL analysis
+  codeql:
+    enabled: true
+    languages: ['javascript-typescript']
+    queries: ['security-and-quality']
+
+# Performance Requirements
+performance:
+  # Lighthouse scores (when available)
+  lighthouse:
+    performance: 90
+    accessibility: 95
+    best_practices: 95
+    seo: 90
+
+# Git Requirements
+git:
+  # Commit message format
+  conventional_commits: true
+
+  # Branch protection
+  branch_protection:
+    require_reviews: true
+    dismiss_stale_reviews: true
+    require_status_checks: true
+
+# CI/CD Pipeline Configuration
+pipeline:
+  # Parallel jobs configuration
+  parallelization:
+    enabled: true
+    max_workers: 4
+
+  # Artifact retention
+  artifacts:
+    retention_days: 30
+
+  # Deployment gates
+  deployment:
+    require_all_checks: true
+    auto_deploy: false

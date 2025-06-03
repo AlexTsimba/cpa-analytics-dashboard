@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '../helpers/test-utils';
+
 import Home from '@/app/page';
 import EnvTestComponent from '@/components/debug/EnvTestComponent';
+
+import { render, screen } from '../helpers/test-utils';
 
 describe('Application Integration Tests', () => {
   beforeEach(() => {

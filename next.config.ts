@@ -1,6 +1,12 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // ESLint configuration
+  eslint: {
+    dirs: ['src', 'components', 'lib', 'app'], // Only run ESLint on specific directories
+    ignoreDuringBuilds: false, // Keep ESLint checks during build
+  },
+
   // Environment variables that should be available to the client
   env: {
     // Custom environment variables can be defined here
@@ -56,8 +62,9 @@ const nextConfig: NextConfig = {
 
   // Bundle analyzer configuration
   ...(process.env['ANALYZE'] === 'true' && {
-    webpack: (config: any) => {
+    webpack: (config: { plugins: unknown[] }) => {
       if (process.env['ANALYZE'] === 'true') {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
         config.plugins.push(
           new BundleAnalyzerPlugin({
