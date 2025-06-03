@@ -267,7 +267,7 @@ NEXT_PUBLIC_ANALYTICS_ID=
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **UI Components**: [React 19](https://react.dev/)
 - **Code Quality**: ESLint, Prettier, Husky
-- **Testing**: Jest, React Testing Library
+- **Testing**: Vitest, React Testing Library
 - **Development**: Turbopack (dev), Webpack (prod)
 
 ## 🚀 Deployment

@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "useDefineForClassFields": true,
     "allowJs": true,
     "skipLibCheck": true,
 
@@ -59,7 +60,8 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": false,
     "declarationMap": false,
-    "sourceMap": false
+    "sourceMap": false,
+    "tsBuildInfoFile": ".tsbuildinfo"
   },
   "include": [
     "next-env.d.ts",
