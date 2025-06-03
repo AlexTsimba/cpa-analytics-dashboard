@@ -1,11 +1,6 @@
 import {
-  render,
-  screen,
   fireEvent,
   waitFor,
-  act,
-  cleanup,
-  within,
   getByRole,
   getByText,
   getByLabelText,
@@ -56,10 +51,17 @@ import {
   findAllByTitle,
   prettyDOM,
   logDOM,
-  configure,
   getDefaultNormalizer,
   buildQueries,
   createEvent,
+} from '@testing-library/dom';
+import {
+  render,
+  screen,
+  act,
+  cleanup,
+  within,
+  configure,
   type RenderOptions,
   type RenderResult,
   type Queries,
@@ -79,7 +81,7 @@ const customRender = (
   options?: Omit<RenderOptions, 'wrapper'>
 ): RenderResult => render(ui, { wrapper: AllTheProviders, ...options });
 
-// Re-export everything from React Testing Library explicitly
+// Re-export everything explicitly
 export {
   // Main render function
   customRender as render,
