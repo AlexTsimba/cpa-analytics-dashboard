@@ -8,11 +8,11 @@ on:
 
 # CRITICAL: These permissions fix the "Resource not accessible by integration" error
 permissions:
-  contents: write    # Required for creating releases and tags
-  packages: write    # For publishing packages
-  actions: read      # Standard permission
-  checks: write      # For check runs
-  issues: write      # For issue comments
+  contents: write # Required for creating releases and tags
+  packages: write # For publishing packages
+  actions: read # Standard permission
+  checks: write # For check runs
+  issues: write # For issue comments
   pull-requests: write # For PR comments
   security-events: write # For security scanning
 
@@ -277,16 +277,16 @@ jobs:
 
             **Commit**: ${{ github.sha }}
             **Author**: ${{ github.actor }}
-            
+
             ## What's Changed
-            
+
             - ✅ All security scans passed
             - ✅ Code quality checks passed  
             - ✅ End-to-end tests passed
             - ✅ Successfully deployed to production
-            
+
             ## Technical Details
-            
+
             - **Node.js Version**: ${{ env.NODE_VERSION }}
             - **Build**: ${{ github.run_number }}
             - **Workflow**: ${{ github.workflow }}
