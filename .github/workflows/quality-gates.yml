@@ -14,7 +14,7 @@ on:
         type: boolean
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
   COVERAGE_THRESHOLD: 80
   # CI Environment Variables
   NEXT_PUBLIC_APP_URL: 'http://localhost:3000'

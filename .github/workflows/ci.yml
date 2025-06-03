@@ -7,7 +7,7 @@ on:
     branches: [master, main]
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
   # CI Environment Variables
   NEXT_PUBLIC_APP_URL: 'http://localhost:3000'
   NODE_ENV: 'test'
