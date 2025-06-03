@@ -217,12 +217,12 @@ jobs:
           release_name: Release v${{ github.run_number }}
           body: |
             🚀 **Production Deployment Successful**
-            
+
             **Vercel URL**: ${{ steps.vercel-deploy.outputs.preview-url }}
-            
+
             **Changes in this release:**
             ${{ github.event.head_commit.message }}
-            
+
             **Commit**: ${{ github.sha }}
             **Author**: ${{ github.actor }}
           draft: false
