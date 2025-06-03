@@ -95,14 +95,8 @@ jobs:
       - name: Run security audit
         run: npm audit --audit-level=critical || true
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: javascript
-          config-file: ./.github/codeql-config.yml
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+      # CodeQL removed due to conflict with GitHub's default setup
+      # TODO: Either disable GitHub's default CodeQL or configure this properly
 
   e2e-tests:
     name: End-to-End Tests
