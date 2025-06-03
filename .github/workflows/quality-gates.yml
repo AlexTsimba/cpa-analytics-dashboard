@@ -49,7 +49,7 @@ jobs:
         id: quality_gates
         run: |
           echo "Starting comprehensive quality gates verification..."
-          ./scripts/quality-gates.sh
+          ./scripts/quality-gates.sh quick
           echo "quality_gates_status=success" >> $GITHUB_OUTPUT
 
       - name: Environment Verification

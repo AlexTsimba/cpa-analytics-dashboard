@@ -13,26 +13,23 @@ export default defineConfig({
   testDir: './e2e',
 
   // Global timeout for test execution
-  timeout: 60000,
+  timeout: process.env['CI'] ? 30000 : 60000, // Reduced timeout for CI
 
   // Expect timeout for assertions
   expect: {
     // Timeout for expect() calls
-    timeout: 15000,
+    timeout: process.env['CI'] ? 5000 : 15000, // Reduced for CI
   },
 
   // Test execution configuration
-  fullyParallel: true,
+  fullyParallel: false, // Disable parallel tests in CI
   forbidOnly: !!process.env['CI'],
-  retries: process.env['CI'] ? 3 : 1,
-  workers: process.env['CI'] ? 1 : 2,
+  retries: process.env['CI'] ? 1 : 0, // Reduced retries
+  workers: 1, // Single worker to avoid resource issues
 
   // Reporter configuration - optimized for CI/CD
   reporter: process.env['CI']
-    ? [
-        ['junit', { outputFile: 'playwright-report/junit-results.xml' }],
-        ['blob'],
-      ]
+    ? [['list', { printSteps: false }]] // Simple list reporter for CI
     : [
         ['html', { outputFolder: 'playwright-report', open: 'never' }],
         ['list', { printSteps: true }],
@@ -49,8 +46,8 @@ export default defineConfig({
     video: 'retain-on-failure',
 
     // Network and timing
-    actionTimeout: 30000,
-    navigationTimeout: 60000,
+    actionTimeout: process.env['CI'] ? 10000 : 30000, // Reduced for CI
+    navigationTimeout: process.env['CI'] ? 30000 : 60000, // Reduced for CI
 
     // Locale and timezone
     locale: 'en-US',
