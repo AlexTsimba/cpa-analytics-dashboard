@@ -167,17 +167,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build project
-        run: npm run build
-
       - name: Deploy to Vercel Preview
         uses: amondnet/vercel-action@v25
-        if: github.event_name == 'pull_request'
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prebuilt'
+          github-comment: true
+          # Remove --prebuilt and let Vercel handle the build
 
   production-deploy:
     name: Production Deployment
@@ -199,28 +196,43 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build project
-        run: npm run build
-
       - name: Deploy to Vercel Production
+        id: vercel-deploy
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod --prebuilt'
+          vercel-args: '--prod'
+          github-comment: false
+          # Let Vercel handle the build process
 
       - name: Create Release
         uses: actions/create-release@v1
+        if: steps.vercel-deploy.outcome == 'success'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ github.run_number }}
           release_name: Release v${{ github.run_number }}
           body: |
-            Automated release from master branch
-
-            Changes in this release:
+            🚀 **Production Deployment Successful**
+            
+            **Vercel URL**: ${{ steps.vercel-deploy.outputs.preview-url }}
+            
+            **Changes in this release:**
             ${{ github.event.head_commit.message }}
+            
+            **Commit**: ${{ github.sha }}
+            **Author**: ${{ github.actor }}
           draft: false
           prerelease: false
+
+      - name: Deployment Summary
+        run: |
+          echo "## 🚀 Production Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Status**: Successfully deployed to production" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 **URL**: ${{ steps.vercel-deploy.outputs.preview-url }}" >> $GITHUB_STEP_SUMMARY
+          echo "🏷️ **Release**: v${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "📦 **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
