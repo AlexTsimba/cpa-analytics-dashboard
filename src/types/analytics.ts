@@ -4,7 +4,7 @@
  */
 
 // Base analytics record structure
-export interface AnalyticsRecord {
+export type AnalyticsRecord = {
   id: string;
   timestamp: Date;
   campaign_id: string;
@@ -17,10 +17,10 @@ export interface AnalyticsRecord {
   revenue: number;
   // Flexible additional fields for custom metrics
   [key: string]: unknown;
-}
+};
 
 // Normalized data collection
-export interface AnalyticsData {
+export type AnalyticsData = {
   records: AnalyticsRecord[];
   totalCount: number;
   lastUpdated: Date;
@@ -30,10 +30,10 @@ export interface AnalyticsData {
     columns: string[];
     [key: string]: unknown;
   };
-}
+};
 
 // Query interface for analytics requests
-export interface AnalyticsQuery {
+export type AnalyticsQuery = {
   dateRange: {
     start: Date;
     end: Date;
@@ -47,10 +47,10 @@ export interface AnalyticsQuery {
   };
   limit?: number;
   offset?: number;
-}
+};
 
 // KPI calculation results
-export interface KPIMetrics {
+export type KPIMetrics = {
   revenue: number;
   cost: number;
   profit: number;
@@ -61,22 +61,22 @@ export interface KPIMetrics {
   ctr: number;
   cpa: number;
   conversionRate: number;
-}
+};
 
 // Chart data format
-export interface ChartDataPoint {
+export type ChartDataPoint = {
   date: string;
   [metric: string]: string | number;
-}
+};
 
 // Table data format
-export interface TableRow {
+export type TableRow = {
   id: string;
   [column: string]: string | number | Date;
-}
+};
 
 // Dashboard data aggregation
-export interface DashboardData {
+export type DashboardData = {
   kpis: KPIMetrics;
   chartData: ChartDataPoint[];
   tableData: TableRow[];
@@ -88,4 +88,4 @@ export interface DashboardData {
       end: Date;
     };
   };
-}
+};

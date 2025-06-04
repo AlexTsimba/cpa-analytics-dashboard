@@ -4,30 +4,32 @@
  */
 
 import { dataProviderFactory } from '@/providers';
-import type { 
-  DataProvider, 
+import type {
+  ConnectionTestResult,
+  DataProvider,
   DataProviderConfig,
-  ConnectionTestResult 
 } from '@/types/providers';
-import type { 
-  AnalyticsData, 
-  AnalyticsQuery, 
-  DashboardData, 
-  KPIMetrics 
+import type {
+  AnalyticsData,
+  AnalyticsQuery,
+  DashboardData,
+  KPIMetrics,
 } from '@/types/analytics';
 
 export class AnalyticsService {
   private currentProvider: DataProvider | null = null;
   private config: DataProviderConfig | null = null;
 
-  async setDataProvider(config: DataProviderConfig): Promise<ConnectionTestResult> {
+  async setDataProvider(
+    config: DataProviderConfig
+  ): Promise<ConnectionTestResult> {
     try {
       // Validate config
       const validation = dataProviderFactory.validateConfig(config);
       if (!validation.valid) {
         return {
           success: false,
-          message: `Invalid configuration: ${validation.errors?.join(', ')}`
+          message: `Invalid configuration: ${validation.errors?.join(', ')}`,
         };
       }
 
@@ -44,7 +46,7 @@ export class AnalyticsService {
     } catch (error) {
       return {
         success: false,
-        message: `Failed to set provider: ${error instanceof Error ? error.message : String(error)}`
+        message: `Failed to set provider: ${error instanceof Error ? error.message : String(error)}`,
       };
     }
   }
@@ -55,7 +57,7 @@ export class AnalyticsService {
     }
 
     const data = await this.currentProvider.fetch(query);
-    
+
     return {
       kpis: this.calculateKPIs(data),
       chartData: this.transformToChartData(data),
@@ -72,7 +74,7 @@ export class AnalyticsService {
     if (!this.currentProvider) {
       return {
         success: false,
-        message: 'No provider configured'
+        message: 'No provider configured',
       };
     }
 
@@ -89,7 +91,7 @@ export class AnalyticsService {
 
   private calculateKPIs(data: AnalyticsData): KPIMetrics {
     const { records } = data;
-    
+
     const totals = records.reduce(
       (acc, record) => ({
         revenue: acc.revenue + record.revenue,
@@ -103,9 +105,11 @@ export class AnalyticsService {
 
     const profit = totals.revenue - totals.cost;
     const roi = totals.cost > 0 ? (profit / totals.cost) * 100 : 0;
-    const ctr = totals.impressions > 0 ? (totals.clicks / totals.impressions) * 100 : 0;
+    const ctr =
+      totals.impressions > 0 ? (totals.clicks / totals.impressions) * 100 : 0;
     const cpa = totals.conversions > 0 ? totals.cost / totals.conversions : 0;
-    const conversionRate = totals.clicks > 0 ? (totals.conversions / totals.clicks) * 100 : 0;
+    const conversionRate =
+      totals.clicks > 0 ? (totals.conversions / totals.clicks) * 100 : 0;
 
     return {
       revenue: totals.revenue,
@@ -123,17 +127,21 @@ export class AnalyticsService {
 
   private transformToChartData(data: AnalyticsData) {
     // Group by date
-    const dateGroups = data.records.reduce((acc, record) => {
-      const date = record.timestamp.toISOString().split('T')[0];
-      if (!acc[date]) {
-        acc[date] = { revenue: 0, cost: 0, clicks: 0, conversions: 0 };
-      }
-      acc[date].revenue += record.revenue;
-      acc[date].cost += record.cost;
-      acc[date].clicks += record.clicks;
-      acc[date].conversions += record.conversions;
-      return acc;
-    }, {} as Record<string, any>);
+    const dateGroups = data.records.reduce(
+      (acc, record) => {
+        const date = record.timestamp.toISOString().split('T')[0] ?? 'unknown';
+        acc[date] ??= { revenue: 0, cost: 0, clicks: 0, conversions: 0 };
+        acc[date].revenue += record.revenue;
+        acc[date].cost += record.cost;
+        acc[date].clicks += record.clicks;
+        acc[date].conversions += record.conversions;
+        return acc;
+      },
+      {} as Record<
+        string,
+        { revenue: number; cost: number; clicks: number; conversions: number }
+      >
+    );
 
     return Object.entries(dateGroups).map(([date, metrics]) => ({
       date,
@@ -142,11 +150,11 @@ export class AnalyticsService {
   }
 
   private transformToTableData(data: AnalyticsData) {
-    return data.records.map(record => ({
+    return data.records.map((record) => ({
       id: record.id,
       campaign: record.campaign_id,
       source: record.source,
-      date: record.timestamp.toISOString().split('T')[0],
+      date: record.timestamp.toISOString().split('T')[0] ?? '',
       clicks: record.clicks,
       cost: record.cost,
       conversions: record.conversions,
@@ -155,11 +163,11 @@ export class AnalyticsService {
   }
 
   private extractUniqueCampaigns(data: AnalyticsData): string[] {
-    return [...new Set(data.records.map(r => r.campaign_id))];
+    return [...new Set(data.records.map((r) => r.campaign_id))];
   }
 
   private extractUniqueSources(data: AnalyticsData): string[] {
-    return [...new Set(data.records.map(r => r.source))];
+    return [...new Set(data.records.map((r) => r.source))];
   }
 }
 

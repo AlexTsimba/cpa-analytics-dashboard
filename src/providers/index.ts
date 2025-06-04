@@ -5,7 +5,7 @@
 
 // Base classes and utilities
 export { BaseDataProvider } from './base/BaseDataProvider';
-export { 
+export {
   DataProviderRegistryImpl,
   DataProviderFactoryImpl,
   providerRegistry,

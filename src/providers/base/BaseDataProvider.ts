@@ -4,15 +4,19 @@
  */
 
 import type {
+  ConnectionStatus,
+  ConnectionTestResult,
   DataProvider,
   DataProviderConfig,
   DataProviderType,
-  ConnectionTestResult,
-  ValidationResult,
   TransformationResult,
-  ConnectionStatus,
+  ValidationResult,
 } from '@/types/providers';
-import type { AnalyticsData, AnalyticsQuery, AnalyticsRecord } from '@/types/analytics';
+import type {
+  AnalyticsData,
+  AnalyticsQuery,
+  AnalyticsRecord,
+} from '@/types/analytics';
 
 export abstract class BaseDataProvider implements DataProvider {
   protected config: DataProviderConfig | null = null;
@@ -33,7 +37,7 @@ export abstract class BaseDataProvider implements DataProvider {
   abstract getRecordCount(): Promise<number>;
 
   // Common implementation for all providers
-  async disconnect(): Promise<void> {
+  disconnect(): void {
     this.connectionStatus = 'disconnected';
     this.config = null;
     this.lastError = null;
@@ -41,7 +45,9 @@ export abstract class BaseDataProvider implements DataProvider {
 
   configure(config: DataProviderConfig): void {
     if (config.type !== this.type) {
-      throw new Error(`Invalid config type. Expected ${this.type}, got ${config.type}`);
+      throw new Error(
+        `Invalid config type. Expected ${this.type}, got ${config.type}`
+      );
     }
     this.config = config;
   }
@@ -54,7 +60,7 @@ export abstract class BaseDataProvider implements DataProvider {
     if (!this.config) {
       return {
         success: false,
-        message: 'Provider not configured'
+        message: 'Provider not configured',
       };
     }
 
@@ -65,52 +71,52 @@ export abstract class BaseDataProvider implements DataProvider {
       return result;
     } catch (error) {
       this.connectionStatus = 'error';
-      this.lastError = error instanceof Error ? error : new Error(String(error));
+      this.lastError =
+        error instanceof Error ? error : new Error(String(error));
       return {
         success: false,
-        message: `Connection test failed: ${this.lastError.message}`
+        message: `Connection test failed: ${this.lastError.message}`,
       };
     }
   }
 
-  // Basic validation implementation
-  async validate(data: unknown): Promise<ValidationResult> {
+  validate(data: unknown): ValidationResult {
     if (!data) {
       return {
         valid: false,
-        errors: ['Data is null or undefined']
+        errors: ['Data is null or undefined'],
       };
     }
 
     if (typeof data !== 'object') {
       return {
         valid: false,
-        errors: ['Data must be an object']
+        errors: ['Data must be an object'],
       };
     }
 
     return {
-      valid: true
+      valid: true,
     };
   }
 
   // Helper methods for common operations
   protected normalizeDate(dateValue: unknown): Date | null {
     if (!dateValue) return null;
-    
+
     if (dateValue instanceof Date) {
       return dateValue;
     }
-    
+
     if (typeof dateValue === 'string') {
       const parsed = new Date(dateValue);
       return isNaN(parsed.getTime()) ? null : parsed;
     }
-    
+
     if (typeof dateValue === 'number') {
       return new Date(dateValue);
     }
-    
+
     return null;
   }
 
@@ -118,12 +124,12 @@ export abstract class BaseDataProvider implements DataProvider {
     if (typeof value === 'number') {
       return isNaN(value) ? 0 : value;
     }
-    
+
     if (typeof value === 'string') {
       const parsed = parseFloat(value.replace(/[^0-9.-]/g, ''));
       return isNaN(parsed) ? 0 : parsed;
     }
-    
+
     return 0;
   }
 
@@ -131,43 +137,71 @@ export abstract class BaseDataProvider implements DataProvider {
     if (value === null || value === undefined) {
       return '';
     }
-    
-    return String(value).trim();
+
+    if (typeof value === 'object') {
+      try {
+        return JSON.stringify(value);
+      } catch {
+        return '[Complex Object]';
+      }
+    }
+
+    // Type-safe string conversion
+    if (typeof value === 'string') {
+      return value.trim();
+    }
+
+    if (typeof value === 'number' || typeof value === 'boolean') {
+      return String(value).trim();
+    }
+
+    // For any other primitive types (bigint, symbol, etc.)
+    if (typeof value === 'bigint' || typeof value === 'symbol') {
+      return String(value).trim();
+    }
+
+    // Fallback for any remaining cases
+    return '[Unknown Type]';
   }
 
   // Generate unique ID for records
-  protected generateRecordId(record: Partial<AnalyticsRecord>, index: number): string {
-    const timestamp = record.timestamp?.getTime() || Date.now();
-    const campaignId = record.campaign_id || 'unknown';
-    const source = record.source || 'unknown';
-    
+  protected generateRecordId(
+    record: Partial<AnalyticsRecord>,
+    index: number
+  ): string {
+    const timestamp = record.timestamp?.getTime() ?? Date.now();
+    const campaignId = record.campaign_id ?? 'unknown';
+    const source = record.source ?? 'unknown';
+
     return `${this.type}-${timestamp}-${campaignId}-${source}-${index}`;
   }
 
   // Validate required fields in analytics record
-  protected validateAnalyticsRecord(record: Partial<AnalyticsRecord>): string[] {
+  protected validateAnalyticsRecord(
+    record: Partial<AnalyticsRecord>
+  ): string[] {
     const errors: string[] = [];
-    
+
     if (!record.campaign_id) {
       errors.push('Missing campaign_id');
     }
-    
+
     if (!record.source) {
       errors.push('Missing source');
     }
-    
+
     if (!record.timestamp) {
       errors.push('Missing timestamp');
     }
-    
+
     if (typeof record.clicks !== 'number' || record.clicks < 0) {
       errors.push('Invalid clicks value');
     }
-    
+
     if (typeof record.cost !== 'number' || record.cost < 0) {
       errors.push('Invalid cost value');
     }
-    
+
     return errors;
   }
 

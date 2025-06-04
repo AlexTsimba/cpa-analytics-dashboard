@@ -5,21 +5,26 @@
 
 import { google } from 'googleapis';
 import type { sheets_v4 } from 'googleapis';
+import type { GoogleAuth } from 'google-auth-library';
 import { BaseDataProvider } from '../base/BaseDataProvider';
 import {
-  ConnectionError,
   AuthenticationError,
-  TransformationError,
-  type GoogleSheetsConfig,
-  type DataProviderConfig,
+  ConnectionError,
   type ConnectionTestResult,
+  type DataProviderConfig,
+  type GoogleSheetsConfig,
+  TransformationError,
   type TransformationResult,
 } from '@/types/providers';
-import type { AnalyticsData, AnalyticsQuery, AnalyticsRecord } from '@/types/analytics';
+import type {
+  AnalyticsData,
+  AnalyticsQuery,
+  AnalyticsRecord,
+} from '@/types/analytics';
 
 export class GoogleSheetsDataProvider extends BaseDataProvider {
   private sheetsClient: sheets_v4.Sheets | null = null;
-  private auth: any = null;
+  private auth: GoogleAuth | null = null;
 
   constructor() {
     super('Google Sheets', 'google-sheets');
@@ -30,25 +35,51 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
       throw new Error('Invalid config type for Google Sheets provider');
     }
 
-    const gsConfig = config as GoogleSheetsConfig;
+    const gsConfig = config;
 
     try {
       // Initialize authentication based on type
-      if (gsConfig.authType === 'service-account') {
-        this.auth = new google.auth.GoogleAuth({
-          credentials: gsConfig.credentials,
-          scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-        });
-      } else {
+      switch (gsConfig.authType) {
+        case 'service-account': {
+          if (!gsConfig.credentials) {
+            throw new AuthenticationError(
+              'Service account credentials required',
+              this.name
+            );
+          }
+
+          this.auth = new google.auth.GoogleAuth({
+            credentials: gsConfig.credentials,
+            scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+          });
+          break;
+        }
+        case 'oauth2': {
+          throw new AuthenticationError(
+            'OAuth2 authentication not yet implemented',
+            this.name
+          );
+        }
+        default: {
+          throw new AuthenticationError(
+            'Invalid authentication type',
+            this.name
+          );
+        }
+      }
+
+      // Get authenticated client
+      const authClient = this.auth;
+
+      // Ensure auth client is available
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (!authClient) {
         throw new AuthenticationError(
-          'OAuth2 authentication not yet implemented', 
+          'Authentication client not initialized',
           this.name
         );
       }
 
-      // Get authenticated client
-      const authClient = await this.auth.getClient();
-      
       // Initialize Sheets client
       this.sheetsClient = google.sheets({
         version: 'v4',
@@ -64,8 +95,12 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
 
       const latency = Date.now() - startTime;
 
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!response.data) {
-        throw new ConnectionError('No data received from spreadsheet', this.name);
+        throw new ConnectionError(
+          'No data received from spreadsheet',
+          this.name
+        );
       }
 
       // Get a sample of data to validate structure
@@ -73,19 +108,24 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
 
       return {
         success: true,
-        message: `Connected to "${response.data.properties?.title || 'Unknown'}"`,
+        message: `Connected to "${response.data.properties?.title ?? 'Unknown'}"`,
         latency,
         recordCount: sampleData.length,
         sampleData,
       };
-
     } catch (error) {
-      if (error instanceof AuthenticationError || error instanceof ConnectionError) {
+      if (
+        error instanceof AuthenticationError ||
+        error instanceof ConnectionError
+      ) {
         throw error;
       }
 
       const message = error instanceof Error ? error.message : String(error);
-      throw new ConnectionError(`Failed to connect to Google Sheets: ${message}`, this.name);
+      throw new ConnectionError(
+        `Failed to connect to Google Sheets: ${message}`,
+        this.name
+      );
     }
   }
 
@@ -99,7 +139,7 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
     try {
       // Determine range to fetch
       const range = this.buildRange(gsConfig, query);
-      
+
       // Fetch data from sheets
       const response = await this.sheetsClient.spreadsheets.values.get({
         spreadsheetId: gsConfig.spreadsheetId,
@@ -123,7 +163,7 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
 
       // Transform raw data
       const transformResult = await this.transform(response.data.values);
-      
+
       if (!transformResult.success || !transformResult.data) {
         throw new TransformationError(
           `Data transformation failed: ${transformResult.errors?.join(', ')}`,
@@ -135,9 +175,11 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
       const filteredData = this.applyQueryFilters(transformResult.data, query);
 
       return filteredData;
-
     } catch (error) {
-      if (error instanceof TransformationError || error instanceof ConnectionError) {
+      if (
+        error instanceof TransformationError ||
+        error instanceof ConnectionError
+      ) {
         throw error;
       }
 
@@ -148,14 +190,14 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
 
   async transform(raw: unknown): Promise<TransformationResult> {
     if (!Array.isArray(raw)) {
-      return {
+      return Promise.resolve({
         success: false,
         errors: ['Raw data must be an array'],
-      };
+      });
     }
 
     if (raw.length === 0) {
-      return {
+      return Promise.resolve({
         success: true,
         data: {
           records: [],
@@ -167,7 +209,7 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
             columns: [],
           },
         },
-      };
+      });
     }
 
     try {
@@ -177,19 +219,21 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
 
       // Map column headers to expected field names
       const columnMappings = this.generateColumnMappings(headers);
-      
+
       // Transform each row
       const records: AnalyticsRecord[] = [];
       const errors: string[] = [];
 
       for (let i = 0; i < dataRows.length; i++) {
-        const row = dataRows[i] as any[];
-        
+        const row = dataRows[i] as unknown[];
+
         try {
           const record = this.transformRow(row, headers, columnMappings, i);
           records.push(record);
         } catch (error) {
-          errors.push(`Row ${i + 2}: ${error instanceof Error ? error.message : String(error)}`);
+          errors.push(
+            `Row ${i + 2}: ${error instanceof Error ? error.message : String(error)}`
+          );
         }
       }
 
@@ -206,14 +250,15 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
             columnMappings,
           },
         },
-        errors: errors.length > 0 ? errors : undefined,
+        errors: errors.length > 0 ? errors : [],
         columnMappings,
       };
-
     } catch (error) {
       return {
         success: false,
-        errors: [`Transformation failed: ${error instanceof Error ? error.message : String(error)}`],
+        errors: [
+          `Transformation failed: ${error instanceof Error ? error.message : String(error)}`,
+        ],
       };
     }
   }
@@ -226,8 +271,8 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
     const gsConfig = this.config as GoogleSheetsConfig;
 
     try {
-      const range = `${gsConfig.sheetName || 'Sheet1'}!A1:Z${limit + 1}`;
-      
+      const range = `${gsConfig.sheetName ?? 'Sheet1'}!A1:Z${limit + 1}`;
+
       const response = await this.sheetsClient.spreadsheets.values.get({
         spreadsheetId: gsConfig.spreadsheetId,
         range,
@@ -239,8 +284,7 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
       }
 
       const transformResult = await this.transform(response.data.values);
-      return transformResult.data?.records || [];
-
+      return transformResult.data?.records ?? [];
     } catch (error) {
       console.warn('Failed to get sample data:', error);
       return [];
@@ -255,8 +299,8 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
     const gsConfig = this.config as GoogleSheetsConfig;
 
     try {
-      const range = `${gsConfig.sheetName || 'Sheet1'}!1:1`;
-      
+      const range = `${gsConfig.sheetName ?? 'Sheet1'}!1:1`;
+
       const response = await this.sheetsClient.spreadsheets.values.get({
         spreadsheetId: gsConfig.spreadsheetId,
         range,
@@ -267,7 +311,6 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
       }
 
       return response.data.values[0] as string[];
-
     } catch (error) {
       console.warn('Failed to get columns:', error);
       return [];
@@ -287,49 +330,51 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
         fields: 'sheets.properties',
       });
 
-      const sheet = response.data.sheets?.find(s => 
-        !gsConfig.sheetName || s.properties?.title === gsConfig.sheetName
+      const sheet = response.data.sheets?.find(
+        (s) => !gsConfig.sheetName || s.properties?.title === gsConfig.sheetName
       );
 
-      return (sheet?.properties?.gridProperties?.rowCount || 1) - 1; // Subtract header row
-
+      return (sheet?.properties?.gridProperties?.rowCount ?? 1) - 1; // Subtract header row
     } catch (error) {
       console.warn('Failed to get record count:', error);
       return 0;
     }
   }
 
-  private buildRange(config: GoogleSheetsConfig, query: AnalyticsQuery): string {
+  private buildRange(
+    config: GoogleSheetsConfig,
+    query: AnalyticsQuery
+  ): string {
     if (config.range) {
       return config.range;
     }
 
-    const sheetName = config.sheetName || 'Sheet1';
-    const limit = query.limit || 1000;
-    
+    const sheetName = config.sheetName ?? 'Sheet1';
+    const limit = query.limit ?? 1000;
+
     return `${sheetName}!A1:Z${limit + 1}`;
   }
 
   private generateColumnMappings(headers: string[]): Record<string, string> {
     const mappings: Record<string, string> = {};
-    
+
     // Common field mappings
     const fieldMappings = {
       // Date fields
-      'date': ['date', 'timestamp', 'day'],
-      'timestamp': ['timestamp', 'date', 'time'],
-      
+      date: ['date', 'timestamp', 'day'],
+      timestamp: ['timestamp', 'date', 'time'],
+
       // Campaign fields
-      'campaign_id': ['campaign_id', 'campaign id', 'campaign', 'campaignid'],
-      'source': ['source', 'utm_source', 'traffic_source'],
-      'medium': ['medium', 'utm_medium', 'traffic_medium'],
-      
+      campaign_id: ['campaign_id', 'campaign id', 'campaign', 'campaignid'],
+      source: ['source', 'utm_source', 'traffic_source'],
+      medium: ['medium', 'utm_medium', 'traffic_medium'],
+
       // Metrics
-      'clicks': ['clicks', 'click', 'total_clicks'],
-      'impressions': ['impressions', 'impression', 'total_impressions', 'views'],
-      'cost': ['cost', 'spend', 'amount', 'total_cost'],
-      'conversions': ['conversions', 'conversion', 'total_conversions', 'conv'],
-      'revenue': ['revenue', 'total_revenue', 'income', 'sales'],
+      clicks: ['clicks', 'click', 'total_clicks'],
+      impressions: ['impressions', 'impression', 'total_impressions', 'views'],
+      cost: ['cost', 'spend', 'amount', 'total_cost'],
+      conversions: ['conversions', 'conversion', 'total_conversions', 'conv'],
+      revenue: ['revenue', 'total_revenue', 'income', 'sales'],
     };
 
     for (const [field, variations] of Object.entries(fieldMappings)) {
@@ -346,9 +391,9 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
   }
 
   private transformRow(
-    row: any[], 
-    headers: string[], 
-    mappings: Record<string, string>, 
+    row: unknown[],
+    headers: string[],
+    mappings: Record<string, string>,
     index: number
   ): AnalyticsRecord {
     const record: Partial<AnalyticsRecord> = {};
@@ -356,14 +401,21 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
     // Map each cell to the appropriate field
     for (let i = 0; i < headers.length && i < row.length; i++) {
       const header = headers[i];
-      const mappedField = mappings[header] || header.toLowerCase().replace(/\s+/g, '_');
+      if (!header) continue; // Skip undefined headers
+
+      const mappedField =
+        mappings[header] ?? header.toLowerCase().replace(/\s+/g, '_');
       const value = row[i];
 
       switch (mappedField) {
         case 'timestamp':
-        case 'date':
-          record.timestamp = this.normalizeDate(value);
+        case 'date': {
+          const normalizedDate = this.normalizeDate(value);
+          if (normalizedDate) {
+            record.timestamp = normalizedDate;
+          }
           break;
+        }
         case 'campaign_id':
           record.campaign_id = this.normalizeString(value);
           break;
@@ -396,14 +448,14 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
 
     // Set defaults for required fields
     record.id = this.generateRecordId(record, index);
-    record.timestamp = record.timestamp || new Date();
-    record.campaign_id = record.campaign_id || 'unknown';
-    record.source = record.source || 'unknown';
-    record.clicks = record.clicks || 0;
-    record.impressions = record.impressions || 0;
-    record.cost = record.cost || 0;
-    record.conversions = record.conversions || 0;
-    record.revenue = record.revenue || 0;
+    record.timestamp = record.timestamp ?? new Date();
+    record.campaign_id = record.campaign_id ?? 'unknown';
+    record.source = record.source ?? 'unknown';
+    record.clicks = record.clicks ?? 0;
+    record.impressions = record.impressions ?? 0;
+    record.cost = record.cost ?? 0;
+    record.conversions = record.conversions ?? 0;
+    record.revenue = record.revenue ?? 0;
 
     // Validate required fields
     const validationErrors = this.validateAnalyticsRecord(record);
@@ -414,21 +466,28 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
     return record as AnalyticsRecord;
   }
 
-  private applyQueryFilters(data: AnalyticsData, query: AnalyticsQuery): AnalyticsData {
+  private applyQueryFilters(
+    data: AnalyticsData,
+    query: AnalyticsQuery
+  ): AnalyticsData {
     let filteredRecords = [...data.records];
 
     // Apply date range filter
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (query.dateRange) {
-      filteredRecords = filteredRecords.filter(record => {
+      filteredRecords = filteredRecords.filter((record) => {
         const recordDate = new Date(record.timestamp);
-        return recordDate >= query.dateRange.start && recordDate <= query.dateRange.end;
+        return (
+          recordDate >= query.dateRange.start &&
+          recordDate <= query.dateRange.end
+        );
       });
     }
 
     // Apply general filters
     if (query.filters) {
       for (const [field, value] of Object.entries(query.filters)) {
-        filteredRecords = filteredRecords.filter(record => {
+        filteredRecords = filteredRecords.filter((record) => {
           const recordValue = record[field as keyof AnalyticsRecord];
           return recordValue === value;
         });
@@ -437,11 +496,14 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
 
     // Apply sorting
     if (query.orderBy) {
+      const orderByField = query.orderBy.field as keyof AnalyticsRecord;
+      const direction = query.orderBy.direction;
+
       filteredRecords.sort((a, b) => {
-        const aVal = a[query.orderBy!.field as keyof AnalyticsRecord] as any;
-        const bVal = b[query.orderBy!.field as keyof AnalyticsRecord] as any;
-        
-        if (query.orderBy!.direction === 'desc') {
+        const aVal = a[orderByField] as string | number;
+        const bVal = b[orderByField] as string | number;
+
+        if (direction === 'desc') {
           return bVal > aVal ? 1 : -1;
         }
         return aVal > bVal ? 1 : -1;
@@ -450,7 +512,7 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
 
     // Apply limit and offset
     if (query.offset || query.limit) {
-      const start = query.offset || 0;
+      const start = query.offset ?? 0;
       const end = query.limit ? start + query.limit : filteredRecords.length;
       filteredRecords = filteredRecords.slice(start, end);
     }

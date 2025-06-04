@@ -3,25 +3,33 @@
  * Interfaces and types for the data provider architecture
  */
 
-import type { AnalyticsData, AnalyticsQuery, AnalyticsRecord } from './analytics';
+import type {
+  AnalyticsData,
+  AnalyticsQuery,
+  AnalyticsRecord,
+} from './analytics';
 
 // Supported data provider types
 export type DataProviderType = 'google-sheets' | 'clickhouse' | 'api' | 'csv';
 
 // Provider connection status
-export type ConnectionStatus = 'connected' | 'disconnected' | 'connecting' | 'error';
+export type ConnectionStatus =
+  | 'connected'
+  | 'disconnected'
+  | 'connecting'
+  | 'error';
 
 // Base data provider configuration
-export interface BaseProviderConfig {
+export type BaseProviderConfig = {
   name: string;
   type: DataProviderType;
   enabled: boolean;
   lastTested?: Date;
   connectionStatus: ConnectionStatus;
-}
+};
 
 // Google Sheets specific configuration
-export interface GoogleSheetsConfig extends BaseProviderConfig {
+export type GoogleSheetsConfig = {
   type: 'google-sheets';
   spreadsheetId: string;
   sheetName?: string;
@@ -40,10 +48,10 @@ export interface GoogleSheetsConfig extends BaseProviderConfig {
     client_x509_cert_url: string;
   };
   refreshInterval?: number; // minutes
-}
+} & BaseProviderConfig;
 
 // ClickHouse specific configuration (future)
-export interface ClickHouseConfig extends BaseProviderConfig {
+export type ClickHouseConfig = {
   type: 'clickhouse';
   host: string;
   port: number;
@@ -52,78 +60,78 @@ export interface ClickHouseConfig extends BaseProviderConfig {
   password: string;
   secure?: boolean;
   table: string;
-}
+} & BaseProviderConfig;
 
 // Union type for all provider configurations
 export type DataProviderConfig = GoogleSheetsConfig | ClickHouseConfig;
 
 // Data transformation result
-export interface TransformationResult {
+export type TransformationResult = {
   success: boolean;
   data?: AnalyticsData;
   errors?: string[];
   warnings?: string[];
   columnMappings?: Record<string, string>;
-}
+};
 
 // Provider validation result
-export interface ValidationResult {
+export type ValidationResult = {
   valid: boolean;
   errors?: string[];
   suggestions?: string[];
-}
+};
 
 // Provider connection test result
-export interface ConnectionTestResult {
+export type ConnectionTestResult = {
   success: boolean;
   message: string;
   latency?: number;
   recordCount?: number;
   sampleData?: AnalyticsRecord[];
-}
+};
 
 // Abstract data provider interface
-export interface DataProvider {
+export type DataProvider = {
   // Provider identification
   readonly name: string;
   readonly type: DataProviderType;
-  
+
   // Core functionality
   fetch(query: AnalyticsQuery): Promise<AnalyticsData>;
   transform(raw: unknown): Promise<TransformationResult>;
-  validate(data: unknown): Promise<ValidationResult>;
-  
+  validate(data: unknown): ValidationResult;
+
   // Connection management
   connect(config: DataProviderConfig): Promise<ConnectionTestResult>;
-  disconnect(): Promise<void>;
+  disconnect(): void;
   testConnection(): Promise<ConnectionTestResult>;
-  
+
   // Configuration
   configure(config: DataProviderConfig): void;
   getConfig(): DataProviderConfig | null;
-  
+
   // Utility methods
   getSampleData(limit?: number): Promise<AnalyticsRecord[]>;
   getAvailableColumns(): Promise<string[]>;
   getRecordCount(): Promise<number>;
-}
+};
 
 // Provider factory interface
-export interface DataProviderFactory {
+export type DataProviderFactory = {
   create(config: DataProviderConfig): DataProvider;
   register(type: DataProviderType, provider: new () => DataProvider): void;
   getAvailableTypes(): DataProviderType[];
   validateConfig(config: DataProviderConfig): ValidationResult;
-}
+};
 
 // Provider registry for managing available providers
-export interface ProviderRegistry {
+export type ProviderRegistry = {
   providers: Map<DataProviderType, new () => DataProvider>;
   register(type: DataProviderType, provider: new () => DataProvider): void;
   unregister(type: DataProviderType): void;
   isRegistered(type: DataProviderType): boolean;
   getRegistered(): DataProviderType[];
-}
+};
 
 // Provider error types
 export class DataProviderError extends Error {

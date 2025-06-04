@@ -4,12 +4,13 @@
  */
 
 import type {
+  ClickHouseConfig as _ClickHouseConfig,
   DataProvider,
-  DataProviderType,
   DataProviderConfig,
   DataProviderFactory,
+  DataProviderType,
   ProviderRegistry,
-  ValidationResult
+  ValidationResult,
 } from '@/types/providers';
 
 export class DataProviderRegistryImpl implements ProviderRegistry {
@@ -54,85 +55,118 @@ export class DataProviderFactoryImpl implements DataProviderFactory {
     return this.registry.getRegistered();
   }
 
-  validateConfig(config: DataProviderConfig): ValidationResult {
-    if (!config.type) {
+  validateConfig(config: unknown): ValidationResult {
+    // Check if config exists
+    if (!config || typeof config !== 'object') {
       return {
         valid: false,
-        errors: ['Provider type is required']
+        errors: ['Configuration is required'],
       };
     }
 
-    if (!this.registry.isRegistered(config.type)) {
+    const configObj = config as Record<string, unknown>;
+
+    // Check if type exists
+    if (!configObj['type']) {
       return {
         valid: false,
-        errors: [`Provider type '${config.type}' is not registered`],
-        suggestions: [`Available types: ${this.getAvailableTypes().join(', ')}`]
+        errors: ['Provider type is required'],
+      };
+    }
+
+    const typedConfig = config as DataProviderConfig;
+
+    // Check if provider type is registered
+    if (!this.registry.isRegistered(typedConfig.type)) {
+      return {
+        valid: false,
+        errors: [`Provider type '${typedConfig.type}' is not registered`],
+        suggestions: [
+          `Available types: ${this.getAvailableTypes().join(', ')}`,
+        ],
       };
     }
 
     // Type-specific validation
-    switch (config.type) {
+    switch (typedConfig.type) {
       case 'google-sheets':
-        return this.validateGoogleSheetsConfig(config);
+        return this.validateGoogleSheetsConfig(configObj);
       case 'clickhouse':
-        return this.validateClickHouseConfig(config);
+        return this.validateClickHouseConfig(configObj);
       default:
         return { valid: true };
     }
   }
 
-  private validateGoogleSheetsConfig(config: DataProviderConfig): ValidationResult {
-    if (config.type !== 'google-sheets') {
+  private validateGoogleSheetsConfig(
+    config: Record<string, unknown>
+  ): ValidationResult {
+    if (config['type'] !== 'google-sheets') {
       return { valid: false, errors: ['Invalid config type'] };
     }
 
     const errors: string[] = [];
-    
-    if (!config.spreadsheetId) {
+
+    if (!config['spreadsheetId']) {
       errors.push('Spreadsheet ID is required');
     }
 
-    if (!config.authType) {
+    if (!config['authType']) {
       errors.push('Authentication type is required');
     }
 
-    if (config.authType === 'service-account' && !config.credentials) {
+    if (config['authType'] === 'service-account' && !config['credentials']) {
       errors.push('Service account credentials are required');
     }
 
+    if (errors.length > 0) {
+      return {
+        valid: false,
+        errors,
+      };
+    }
+
     return {
-      valid: errors.length === 0,
-      errors: errors.length > 0 ? errors : undefined
+      valid: true,
     };
   }
 
-  private validateClickHouseConfig(config: DataProviderConfig): ValidationResult {
-    if (config.type !== 'clickhouse') {
+  private validateClickHouseConfig(
+    config: Record<string, unknown>
+  ): ValidationResult {
+    if (config['type'] !== 'clickhouse') {
       return { valid: false, errors: ['Invalid config type'] };
     }
 
-    const chConfig = config as any; // Cast to any since ClickHouseConfig is future
     const errors: string[] = [];
-    
-    if (!chConfig.host) {
+
+    if (!config['host']) {
       errors.push('Host is required');
     }
 
-    if (!chConfig.database) {
+    if (!config['database']) {
       errors.push('Database is required');
     }
 
-    if (!chConfig.table) {
+    if (!config['table']) {
       errors.push('Table is required');
     }
 
+    if (errors.length > 0) {
+      return {
+        valid: false,
+        errors,
+      };
+    }
+
     return {
-      valid: errors.length === 0,
-      errors: errors.length > 0 ? errors : undefined
+      valid: true,
     };
   }
 }
 
 // Singleton registry and factory instances
 export const providerRegistry = new DataProviderRegistryImpl();
-export const dataProviderFactory = new DataProviderFactoryImpl(providerRegistry);
+export const dataProviderFactory = new DataProviderFactoryImpl(
+  providerRegistry
+);

@@ -11,6 +11,60 @@ import {
 import { GoogleSheetsDataProvider } from '../google-sheets/GoogleSheetsProvider';
 import type { GoogleSheetsConfig, DataProvider } from '@/types/providers';
 
+// Mock ClickHouse provider for testing
+class MockClickHouseProvider implements DataProvider {
+  readonly name = 'ClickHouse';
+  readonly type = 'clickhouse' as const;
+
+  async fetch(): Promise<any> {
+    return {};
+  }
+  async transform(): Promise<any> {
+    return {
+      success: true,
+      data: {
+        records: [],
+        totalCount: 0,
+        lastUpdated: new Date(),
+        metadata: {
+          source: 'test',
+          version: '1.0',
+          columns: [],
+          columnMappings: {},
+        },
+      },
+      errors: [],
+    };
+  }
+  validate(): any {
+    return { valid: true, errors: [] };
+  }
+  async connect(): Promise<any> {
+    return { success: true, message: 'Connected' };
+  }
+  disconnect() {
+    return;
+  }
+  async testConnection(): Promise<any> {
+    return { success: true, message: 'Connected' };
+  }
+  configure() {
+    return;
+  }
+  getConfig() {
+    return null;
+  }
+  async getSampleData() {
+    return [];
+  }
+  async getAvailableColumns() {
+    return [];
+  }
+  async getRecordCount() {
+    return 0;
+  }
+}
+
 describe('DataProviderRegistryImpl', () => {
   let registry: DataProviderRegistryImpl;
 
@@ -28,24 +82,6 @@ describe('DataProviderRegistryImpl', () => {
 
     it('should allow multiple providers', () => {
       registry.register('google-sheets', GoogleSheetsDataProvider);
-      
-      class MockClickHouseProvider implements DataProvider {
-        readonly name = 'ClickHouse';
-        readonly type = 'clickhouse' as const;
-        
-        async fetch() { throw new Error('Not implemented'); }
-        async transform() { throw new Error('Not implemented'); }
-        async validate() { throw new Error('Not implemented'); }
-        async connect() { throw new Error('Not implemented'); }
-        async disconnect() { return; }
-        async testConnection() { throw new Error('Not implemented'); }
-        configure() { return; }
-        getConfig() { return null; }
-        async getSampleData() { return []; }
-        async getAvailableColumns() { return []; }
-        async getRecordCount() { return 0; }
-      }
-
       registry.register('clickhouse', MockClickHouseProvider);
 
       expect(registry.getRegistered()).toHaveLength(2);
@@ -107,13 +143,15 @@ describe('DataProviderFactoryImpl', () => {
       type: 'service_account',
       project_id: 'test-project',
       private_key_id: 'test-key-id',
-      private_key: '-----BEGIN PRIVATE KEY-----\ntest-key\n-----END PRIVATE KEY-----\n',
+      private_key:
+        '-----BEGIN PRIVATE KEY-----\ntest-key\n-----END PRIVATE KEY-----\n',
       client_email: 'test@test-project.iam.gserviceaccount.com',
       client_id: 'test-client-id',
       auth_uri: 'https://accounts.google.com/o/oauth2/auth',
       token_uri: 'https://oauth2.googleapis.com/token',
       auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
-      client_x509_cert_url: 'https://www.googleapis.com/robot/v1/metadata/x509/test%40test-project.iam.gserviceaccount.com',
+      client_x509_cert_url:
+        'https://www.googleapis.com/robot/v1/metadata/x509/test%40test-project.iam.gserviceaccount.com',
     },
   };
 
@@ -164,6 +202,7 @@ describe('DataProviderFactoryImpl', () => {
   describe('validateConfig', () => {
     beforeEach(() => {
       factory.register('google-sheets', GoogleSheetsDataProvider);
+      factory.register('clickhouse', MockClickHouseProvider);
     });
 
     it('should validate valid Google Sheets config', () => {
@@ -174,7 +213,7 @@ describe('DataProviderFactoryImpl', () => {
     });
 
     it('should return error for missing provider type', () => {
-      const invalidConfig = { ...mockGoogleSheetsConfig, type: undefined as any };
+      const invalidConfig = {} as any; // Config without type
 
       const result = factory.validateConfig(invalidConfig);
 
@@ -183,20 +222,27 @@ describe('DataProviderFactoryImpl', () => {
     });
 
     it('should return error for unregistered provider type', () => {
-      const invalidConfig = { ...mockGoogleSheetsConfig, type: 'non-existent' as any };
+      const invalidConfig = {
+        ...mockGoogleSheetsConfig,
+        type: 'non-existent' as any,
+      };
 
       const result = factory.validateConfig(invalidConfig);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain("Provider type 'non-existent' is not registered");
-      expect(result.suggestions).toContain('Available types: google-sheets');
+      expect(result.errors).toContain(
+        "Provider type 'non-existent' is not registered"
+      );
+      expect(result.suggestions).toContain(
+        'Available types: google-sheets, clickhouse'
+      );
     });
 
     it('should validate Google Sheets specific fields', () => {
       const invalidConfig = {
         ...mockGoogleSheetsConfig,
-        spreadsheetId: '',
-        authType: undefined as any,
+        spreadsheetId: '', // Empty spreadsheet ID
+        authType: undefined as any, // Missing auth type
       };
 
       const result = factory.validateConfig(invalidConfig);
@@ -210,13 +256,15 @@ describe('DataProviderFactoryImpl', () => {
       const invalidConfig = {
         ...mockGoogleSheetsConfig,
         authType: 'service-account' as const,
-        credentials: undefined,
+        credentials: null as any,
       };
 
       const result = factory.validateConfig(invalidConfig);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Service account credentials are required');
+      expect(result.errors).toContain(
+        'Service account credentials are required'
+      );
     });
 
     it('should validate ClickHouse config fields (future)', () => {
@@ -225,12 +273,12 @@ describe('DataProviderFactoryImpl', () => {
         type: 'clickhouse' as const,
         enabled: true,
         connectionStatus: 'disconnected' as const,
-        host: '',
+        host: '', // Empty host
         port: 8123,
-        database: '',
+        database: '', // Empty database
         username: 'default',
         password: '',
-        table: '',
+        table: '', // Empty table
       };
 
       const result = factory.validateConfig(clickhouseConfig);
