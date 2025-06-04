@@ -106,7 +106,7 @@ jobs:
       - name: Run basic secret patterns check
         run: |
           echo "## 🔒 Basic Secret Pattern Detection" >> $GITHUB_STEP_SUMMARY
-          
+
           # Define patterns to search for
           PATTERNS=(
             "password\s*[:=]\s*['\"][^'\"]{8,}['\"]"
@@ -118,16 +118,16 @@ jobs:
             "pk_live_[a-zA-Z0-9]{24,}"
             "ghp_[a-zA-Z0-9]{36}"
           )
-          
+
           FOUND_ISSUES=0
-          
+
           for pattern in "${PATTERNS[@]}"; do
             if grep -rE "$pattern" . --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.next --exclude="*.log" 2>/dev/null; then
               ((FOUND_ISSUES++))
               echo "⚠️ Potential secret pattern found: $pattern" >> $GITHUB_STEP_SUMMARY
             fi
           done
-          
+
           if [[ $FOUND_ISSUES -eq 0 ]]; then
             echo "✅ No obvious secret patterns detected" >> $GITHUB_STEP_SUMMARY
           else
