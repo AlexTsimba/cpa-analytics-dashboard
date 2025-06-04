@@ -139,7 +139,7 @@ declare global {
 
       /** Enable performance monitoring */
       NEXT_PUBLIC_ENABLE_PERFORMANCE_MONITORING?: string;
-    }
+    };
   }
 }
 

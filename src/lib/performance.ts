@@ -207,14 +207,13 @@ export class PerformanceMonitor {
     for (const metric of phaseMetrics) {
       const phaseName = metric.name.replace('_duration', '');
       phasesReport[phaseName] ??= {
-          duration: metric.value,
-          startTime: metric.timestamp - metric.value,
-          endTime: metric.timestamp,
-          metrics: this.metrics.filter(
-            (m) =>
-              m.tags?.['phase'] === phaseName || m.name.startsWith(phaseName)
-          ),
-        };
+        duration: metric.value,
+        startTime: metric.timestamp - metric.value,
+        endTime: metric.timestamp,
+        metrics: this.metrics.filter(
+          (m) => m.tags?.['phase'] === phaseName || m.name.startsWith(phaseName)
+        ),
+      };
     }
 
     return {

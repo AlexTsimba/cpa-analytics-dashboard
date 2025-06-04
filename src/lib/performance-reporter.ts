@@ -196,7 +196,9 @@ export class PerformanceReporter {
       if (!existsSync(baselinePath)) return null;
 
       const fileContent = readFileSync(baselinePath, 'utf-8');
-      const baseline = JSON.parse(fileContent) as { metrics?: PerformanceMetric[] };
+      const baseline = JSON.parse(fileContent) as {
+        metrics?: PerformanceMetric[];
+      };
       return baseline.metrics ?? [];
     } catch {
       return null;

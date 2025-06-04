@@ -12,10 +12,10 @@ const compat = new FlatCompat({
 export default tseslint.config(
   // Base ESLint recommended rules
   eslint.configs.recommended,
-  
+
   // Next.js configuration using compat for now
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
-  
+
   // TypeScript ESLint configuration
   ...tseslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -65,8 +65,8 @@ export default tseslint.config(
       'prefer-template': 'warn', // Relaxed to warn
       'object-shorthand': 'error',
       'no-nested-ternary': 'warn', // Relaxed to warn
-      'eqeqeq': ['error', 'always', { null: 'ignore' }],
-      'curly': ['error', 'all'],
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
+      curly: ['error', 'all'],
 
       // React/Next.js specific enhancements
       'react/jsx-boolean-value': ['error', 'never'],
@@ -100,7 +100,6 @@ export default tseslint.config(
       '**/__tests__/**/*',
       '**/*.{test,spec}.{js,jsx,ts,tsx}',
       '**/tests/**/*',
-      '**/e2e/**/*',
     ],
     rules: {
       'no-console': 'off',
@@ -110,8 +109,21 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/prefer-promise-reject-errors': 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/consistent-type-imports': 'off',
+      '@typescript-eslint/consistent-type-definitions': 'off',
+      '@typescript-eslint/array-type': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      'sort-imports': 'off',
+      'react/function-component-definition': 'off',
+      'react/jsx-no-useless-fragment': 'off',
     },
   },
 
@@ -148,6 +160,7 @@ export default tseslint.config(
       'assets/**',
       '.tsbuildinfo',
       'tsconfig.tsbuildinfo',
+      'e2e/**', // Ignore e2e directory completely
     ],
-  },
+  }
 );

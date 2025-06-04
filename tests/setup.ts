@@ -77,7 +77,15 @@ vi.mock('next/image', () => ({
 
 // Mock Next.js Link component
 vi.mock('next/link', () => ({
-  default: ({ children, href, ...props }: { children: React.ReactNode; href?: string; [key: string]: any }) => {
+  default: ({
+    children,
+    href,
+    ...props
+  }: {
+    children: React.ReactNode;
+    href?: string;
+    [key: string]: any;
+  }) => {
     return React.createElement('a', { href, ...props }, children);
   },
 }));
@@ -112,7 +120,10 @@ vi.mock('next/dynamic', () => ({
 declare global {
   const testUtils: {
     createMockProps: (overrides?: any) => any;
-    waitFor: (condition: () => boolean | Promise<boolean>, options?: WaitForOptions) => Promise<void>;
+    waitFor: (
+      condition: () => boolean | Promise<boolean>,
+      options?: WaitForOptions
+    ) => Promise<void>;
     mockApi: typeof mockApiServer;
     env: typeof environmentSetup;
   };
