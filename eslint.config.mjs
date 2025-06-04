@@ -27,6 +27,7 @@ const eslintConfig = [
       '.cursor/**',
       'playwright-report/**',
       'playwright-results/**',
+      'assets/**', // Built/compiled assets should be excluded from linting
     ],
     rules: {
       '@typescript-eslint/no-unused-vars': [

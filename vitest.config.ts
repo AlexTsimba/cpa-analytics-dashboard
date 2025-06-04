@@ -16,7 +16,7 @@ export default defineConfig({
     // Global test configuration
     globals: true,
 
-    // Setup files
+    // Setup files - enhanced with new helpers
     setupFiles: ['./tests/setup.ts'],
 
     // File patterns
@@ -29,7 +29,7 @@ export default defineConfig({
     // Coverage configuration
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage',
       exclude: [
         'node_modules/',
@@ -41,6 +41,7 @@ export default defineConfig({
         'src/types/',
         '.next/',
         'dist/',
+        'coverage/',
       ],
       thresholds: {
         global: {
@@ -50,17 +51,37 @@ export default defineConfig({
           statements: 80,
         },
       },
+      skipFull: false,
+      all: true,
     },
 
-    // Test execution configuration
+    // Enhanced test execution configuration
     testTimeout: 10000,
     hookTimeout: 10000,
+    teardownTimeout: 5000,
 
     // UI and reporting
     ui: true,
     open: false,
+    reporters: ['verbose', 'json', 'html'],
+    outputFile: {
+      json: './test-results.json',
+      html: './test-report.html',
+    },
 
     // Watch configuration
     watch: false,
+
+    // Retry configuration for flaky tests
+    retry: process.env['CI'] ? 2 : 0,
+
+    // Enhanced logging
+    logHeapUsage: true,
+    silent: false,
+
+    // Enhanced TypeScript configuration
+    typecheck: {
+      enabled: false, // Disable during test runs for performance
+    },
   },
 });

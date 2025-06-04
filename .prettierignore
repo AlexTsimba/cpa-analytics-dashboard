@@ -60,3 +60,10 @@ pnpm-lock.yaml
 # Test results
 test-results/
 playwright-report/
+test-report.html
+test-results.json
+
+# Generated assets
+assets/
+*.bundle.js
+*.chunk.js
