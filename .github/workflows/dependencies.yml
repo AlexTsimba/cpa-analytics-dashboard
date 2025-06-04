@@ -76,7 +76,7 @@ jobs:
           npm run build
 
       - name: 📝 Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: |
@@ -155,7 +155,7 @@ jobs:
           npm run build || echo "Build failed"
 
       - name: 📝 Create Security Fix PR
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: |
