@@ -6,7 +6,7 @@ import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 
-export function ThemeToggle() {
+export const ThemeToggle = () => {
   const { setTheme, theme } = useTheme();
 
   return (
@@ -21,4 +21,4 @@ export function ThemeToggle() {
       <span className="sr-only">Toggle theme</span>
     </Button>
   );
-}
+};

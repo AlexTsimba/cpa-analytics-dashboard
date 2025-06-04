@@ -192,7 +192,9 @@ const MetricCell = React.forwardRef<
     const formatValue = (val: number | string) => {
       const numVal = typeof val === 'string' ? parseFloat(val) : val;
 
-      if (isNaN(numVal)) return val;
+      if (isNaN(numVal)) {
+        return val;
+      }
 
       switch (format) {
         case 'currency':

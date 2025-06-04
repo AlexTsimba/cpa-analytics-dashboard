@@ -5,7 +5,7 @@
  * for CI/CD pipeline and test execution monitoring.
  */
 
-export interface PerformanceThresholds {
+export type PerformanceThresholds = {
   // CI/CD Pipeline Thresholds (in milliseconds)
   pipeline: {
     total_build_time: { max: number };
@@ -40,7 +40,7 @@ export interface PerformanceThresholds {
     cumulative_layout_shift: { max: number };
     total_blocking_time: { max: number };
   };
-}
+};
 
 export const DEFAULT_THRESHOLDS: PerformanceThresholds = {
   pipeline: {
@@ -71,7 +71,7 @@ export const DEFAULT_THRESHOLDS: PerformanceThresholds = {
     total_blocking_time: { max: 300 }, // 300ms
   },
 };
-export interface AlertConfig {
+export type AlertConfig = {
   enabled: boolean;
   channels: ('console' | 'github' | 'file')[];
   thresholds: {
@@ -79,7 +79,7 @@ export interface AlertConfig {
     consecutive_failures: number;
     memory_increase_percent: number;
   };
-}
+};
 
 export const DEFAULT_ALERT_CONFIG: AlertConfig = {
   enabled: true,

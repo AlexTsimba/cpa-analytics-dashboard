@@ -12,7 +12,7 @@
 /**
  * Player data structure from report.csv (1967 rows)
  */
-export interface PlayerData {
+export type PlayerData = {
   readonly playerId: number;
   readonly originalPlayerId: number;
   readonly signUpDate: string;
@@ -44,12 +44,12 @@ export interface PlayerData {
   readonly casinoBetsCount: number;
   readonly casinoRealNgr: number;
   readonly fixedPerPlayer: number;
-}
+};
 
 /**
  * Traffic data structure from traffic_report.csv (404 rows)
  */
-export interface TrafficData {
+export type TrafficData = {
   readonly date: string;
   readonly foreignLandingId: number;
   readonly osFamily:
@@ -69,7 +69,7 @@ export interface TrafficData {
   readonly cftd: number;
   readonly cd: number;
   readonly rftd: number;
-}
+};
 
 // ============================================================================
 // Calculated Metrics Types
@@ -78,36 +78,36 @@ export interface TrafficData {
 /**
  * Primary performance metrics
  */
-export interface PrimaryMetrics {
+export type PrimaryMetrics = {
   readonly ftdCount: number;
   readonly cpaCost: number;
   readonly ngr: number;
   readonly depositsSum: number;
   readonly cashoutsSum: number;
-}
+};
 
 /**
  * Calculated performance ratios
  */
-export interface PerformanceMetrics {
+export type PerformanceMetrics = {
   readonly cost2Dep: number;
   readonly roas: number;
   readonly avgDepositsPerFtd: number;
   readonly avgDepositAmount: number;
   readonly avgFtdAmount: number;
-}
+};
 
 /**
  * Quality and conversion metrics
  */
-export interface QualityMetrics {
+export type QualityMetrics = {
   readonly approvalRate: number;
   readonly duplicateRate: number;
   readonly cr: number;
   readonly cftd: number;
   readonly cd: number;
   readonly rftd: number;
-}
+};
 
 // ============================================================================
 // Filter System Types
@@ -116,17 +116,17 @@ export interface QualityMetrics {
 /**
  * Date range filter options
  */
-export interface DateRangeFilter {
+export type DateRangeFilter = {
   readonly startDate: string;
   readonly endDate: string;
   readonly mode: 'registration' | 'ftd';
   readonly preset?: 'today' | 'last7d' | 'last30d' | 'last90d' | 'custom';
-}
+};
 
 /**
  * Available filter types with AND logic
  */
-export interface DashboardFilters {
+export type DashboardFilters = {
   readonly dateRange: DateRangeFilter;
   readonly sub2Ids: readonly number[];
   readonly sources: readonly string[];
@@ -138,7 +138,7 @@ export interface DashboardFilters {
     readonly includeSelfExcluded: boolean;
     readonly includeDisabled: boolean;
   };
-}
+};
 
 // ============================================================================
 // Component Props Types
@@ -147,16 +147,16 @@ export interface DashboardFilters {
 /**
  * Common props for dashboard components
  */
-export interface DashboardComponentProps {
+export type DashboardComponentProps = {
   readonly className?: string;
   readonly isLoading?: boolean;
   readonly error?: Error | null;
-}
+};
 
 /**
  * KPI Card component props
  */
-export interface KpiCardProps extends DashboardComponentProps {
+export type KpiCardProps = {
   readonly title: string;
   readonly value: number | string;
   readonly format: 'number' | 'currency' | 'percentage';
@@ -164,7 +164,7 @@ export interface KpiCardProps extends DashboardComponentProps {
     readonly value: number;
     readonly direction: 'up' | 'down' | 'neutral';
   };
-}
+} & DashboardComponentProps;
 
 // ============================================================================
 // State Management Types
@@ -173,7 +173,7 @@ export interface KpiCardProps extends DashboardComponentProps {
 /**
  * Application state structure for Zustand
  */
-export interface AppState {
+export type AppState = {
   readonly filters: DashboardFilters;
   readonly metrics: {
     readonly primary: PrimaryMetrics | null;
@@ -185,17 +185,17 @@ export interface AppState {
     readonly theme: 'light' | 'dark' | 'system';
     readonly sidebarCollapsed: boolean;
   };
-}
+};
 
 /**
  * XState machine context
  */
-export interface DataMachineContext {
+export type DataMachineContext = {
   readonly playerData: readonly PlayerData[];
   readonly trafficData: readonly TrafficData[];
   readonly error: Error | null;
   readonly lastUpdated: Date | null;
-}
+};
 
 /**
  * XState machine events
@@ -217,21 +217,21 @@ export type DataMachineEvent =
 /**
  * Abstract data provider interface
  */
-export interface DataProvider {
+export type DataProvider = {
   readonly loadPlayerData: () => Promise<readonly PlayerData[]>;
   readonly loadTrafficData: () => Promise<readonly TrafficData[]>;
   readonly validateData: (
     data: unknown
   ) => data is PlayerData[] | TrafficData[];
-}
+};
 
 /**
  * CSV data provider implementation
  */
-export interface CsvDataProvider extends DataProvider {
+export type CsvDataProvider = {
   readonly parsePlayerCsv: (csvContent: string) => readonly PlayerData[];
   readonly parseTrafficCsv: (csvContent: string) => readonly TrafficData[];
-}
+} & DataProvider;
 
 // ============================================================================
 // Utility Types

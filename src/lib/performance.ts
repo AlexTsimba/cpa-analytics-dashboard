@@ -7,15 +7,15 @@
 
 import { performance, PerformanceObserver } from 'perf_hooks';
 
-export interface PerformanceMetric {
+export type PerformanceMetric = {
   name: string;
   value: number;
   unit: 'ms' | 'bytes' | 'percent' | 'count';
   timestamp: number;
   tags?: Record<string, string>;
-}
+};
 
-export interface PerformanceReport {
+export type PerformanceReport = {
   summary: {
     totalDuration: number;
     memoryUsage: NodeJS.MemoryUsage;
@@ -31,7 +31,7 @@ export interface PerformanceReport {
       metrics: PerformanceMetric[];
     };
   };
-}
+};
 
 export class PerformanceMonitor {
   private metrics: PerformanceMetric[] = [];
@@ -380,7 +380,9 @@ export function checkPerformanceThresholds(
 
   for (const metric of metrics) {
     const threshold = thresholds[metric.name];
-    if (!threshold) continue;
+    if (!threshold) {
+      continue;
+    }
 
     if (threshold.max !== undefined && metric.value > threshold.max) {
       violations.push(

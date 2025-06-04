@@ -10,14 +10,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
+  MetricCell,
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  MetricCell,
-  TableCaption,
 } from '@/components/ui/data-table';
 import { FilterBar, QuickFilters } from '@/components/ui/filter-bar';
 import { KpiCard, KpiMetric } from '@/components/ui/kpi-card';
@@ -159,8 +159,12 @@ export default function ComponentShowcase() {
   const getTrendForConversions = (
     conversions: number
   ): 'positive' | 'negative' | 'neutral' => {
-    if (conversions > 500) return 'positive';
-    if (conversions > 200) return 'neutral';
+    if (conversions > 500) {
+      return 'positive';
+    }
+    if (conversions > 200) {
+      return 'neutral';
+    }
     return 'negative';
   };
 
@@ -346,7 +350,7 @@ export default function ComponentShowcase() {
                   <KpiCard
                     title="Loading Metric"
                     value={0}
-                    loading={true}
+                    loading
                     variant="outlined"
                   />
                   <div className="grid grid-cols-2 gap-4">
@@ -368,7 +372,7 @@ export default function ComponentShowcase() {
                   <KpiCard
                     title="Failed Metric"
                     value="Error"
-                    error={true}
+                    error
                     variant="outlined"
                   />
                   <div className="flex gap-2">

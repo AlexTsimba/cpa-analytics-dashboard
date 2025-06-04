@@ -2,14 +2,14 @@
  * Performance Monitoring Tests
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
-  PerformanceMonitor,
-  createCIPerformanceMonitor,
-  measureExecutionTime,
   checkPerformanceThresholds,
   compareWithBaseline,
+  createCIPerformanceMonitor,
+  measureExecutionTime,
   type PerformanceMetric,
+  PerformanceMonitor,
 } from '@/lib/performance';
 
 describe('PerformanceMonitor', () => {

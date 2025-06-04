@@ -4,9 +4,9 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import {
   Calendar,
   Download,
+  MoreHorizontal,
   RefreshCw,
   Settings,
-  MoreHorizontal,
 } from 'lucide-react';
 import * as React from 'react';
 
@@ -15,9 +15,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 
@@ -50,22 +50,20 @@ const pageHeaderVariants = cva(
 );
 
 // Breadcrumb Item
-export interface BreadcrumbItem {
+export type BreadcrumbItem = {
   label: string;
   href?: string;
   current?: boolean;
-}
+};
 
 // Date Range Preset
-export interface DateRangePreset {
+export type DateRangePreset = {
   label: string;
   value: string;
   days: number;
-}
+};
 
-export interface PageHeaderProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof pageHeaderVariants> {
+export type PageHeaderProps = {
   title: string;
   description?: string;
   breadcrumbs?: BreadcrumbItem[];
@@ -81,13 +79,14 @@ export interface PageHeaderProps
   onExport?: () => void;
   showSettings?: boolean;
   onSettings?: () => void;
-  customActions?: Array<{
+  customActions?: {
     label: string;
     icon?: React.ComponentType<{ className?: string }>;
     onClick: () => void;
     variant?: 'default' | 'outline' | 'ghost';
-  }>;
-}
+  }[];
+} & React.HTMLAttributes<HTMLDivElement> &
+  VariantProps<typeof pageHeaderVariants>;
 
 // Default date range presets
 const defaultDatePresets: DateRangePreset[] = [

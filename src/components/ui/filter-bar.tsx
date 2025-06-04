@@ -1,7 +1,7 @@
 'use client';
 
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Filter, X, ChevronDown } from 'lucide-react';
+import { ChevronDown, Filter, X } from 'lucide-react';
 import * as React from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -32,25 +32,23 @@ const filterBarVariants = cva(
 );
 
 // Filter Item Interface
-export interface FilterItem {
+export type FilterItem = {
   id: string;
   label: string;
   value: string | number | boolean;
   type: 'text' | 'select' | 'date' | 'number' | 'boolean';
   options?: { label: string; value: string | number }[];
-}
+};
 
 // Active Filter Interface
-export interface ActiveFilter {
+export type ActiveFilter = {
   id: string;
   label: string;
   value: string;
   displayValue?: string;
-}
+};
 
-export interface FilterBarProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof filterBarVariants> {
+export type FilterBarProps = {
   filters?: FilterItem[];
   activeFilters?: ActiveFilter[];
   onFilterAdd?: (filter: FilterItem, value: string | number | boolean) => void;
@@ -58,7 +56,8 @@ export interface FilterBarProps
   onFiltersClear?: () => void;
   searchPlaceholder?: string;
   showFilterCount?: boolean;
-}
+} & React.HTMLAttributes<HTMLDivElement> &
+  VariantProps<typeof filterBarVariants>;
 
 // Main Filter Bar Component
 const FilterBar = React.forwardRef<HTMLDivElement, FilterBarProps>(
@@ -193,13 +192,17 @@ const FilterOption = React.forwardRef<
   const [value, setValue] = React.useState<string>('');
 
   const handleSubmit = () => {
-    if (!value.trim()) return;
+    if (!value.trim()) {
+      return;
+    }
 
     let processedValue: string | number | boolean = value;
 
     if (filter.type === 'number') {
       processedValue = parseFloat(value);
-      if (isNaN(processedValue)) return;
+      if (isNaN(processedValue)) {
+        return;
+      }
     } else if (filter.type === 'boolean') {
       processedValue = value === 'true';
     }

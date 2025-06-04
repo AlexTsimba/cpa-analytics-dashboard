@@ -12,7 +12,7 @@ import {
 } from './performance';
 import { getPerformanceConfig } from './performance-config';
 
-export interface PerformanceAlert {
+export type PerformanceAlert = {
   type:
     | 'threshold_violation'
     | 'regression'
@@ -23,7 +23,7 @@ export interface PerformanceAlert {
   metrics: PerformanceMetric[];
   timestamp: number;
   context: string;
-}
+};
 
 export class PerformanceReporter {
   private alerts: PerformanceAlert[] = [];
@@ -195,8 +195,9 @@ export class PerformanceReporter {
       const baselinePath = join(this.outputDir, 'baseline.json');
       if (!existsSync(baselinePath)) return null;
 
-      const baseline = JSON.parse(readFileSync(baselinePath, 'utf-8'));
-      return baseline.metrics || [];
+      const fileContent = readFileSync(baselinePath, 'utf-8');
+      const baseline = JSON.parse(fileContent) as { metrics?: PerformanceMetric[] };
+      return baseline.metrics ?? [];
     } catch {
       return null;
     }

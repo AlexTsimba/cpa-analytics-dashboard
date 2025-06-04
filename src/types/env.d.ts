@@ -148,42 +148,42 @@ declare global {
 // -----------------------------------------------------------------------------
 
 /** Configuration for Google Sheets integration */
-export interface GoogleSheetsConfig {
+export type GoogleSheetsConfig = {
   apiKey: string;
   spreadsheetId: string;
   clientEmail: string;
   privateKey: string;
-}
+};
 
 /** Configuration for authentication providers */
-export interface AuthConfig {
+export type AuthConfig = {
   nextAuthUrl: string;
   nextAuthSecret: string;
   googleClientId?: string;
   googleClientSecret?: string;
-}
+};
 
 /** Configuration for analytics and monitoring */
-export interface AnalyticsConfig {
+export type AnalyticsConfig = {
   gaTrackingId?: string;
   sentryDsn?: string;
   sentryAuthToken?: string;
-}
+};
 
 /** Configuration for feature flags */
-export interface FeatureFlags {
+export type FeatureFlags = {
   enableCohortAnalysis: boolean;
   enableRealTimeUpdates: boolean;
   enableDataExport: boolean;
   enableDarkMode: boolean;
   dataRefreshInterval: number;
-}
+};
 
 /** Configuration for API rate limiting */
-export interface RateLimitConfig {
+export type RateLimitConfig = {
   requests: number;
   windowMs: number;
-}
+};
 
 // This export is required to make this file a module
 export {};

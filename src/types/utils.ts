@@ -2,23 +2,21 @@
  * Global utility types and helpers for improved TypeScript development
  */
 
+import type { PlayerData, TrafficData } from './index';
+
 // Environment variable validation
-export interface AppEnvironment {
+export type AppEnvironment = {
   readonly NODE_ENV: 'development' | 'production' | 'test';
   readonly NEXT_PUBLIC_APP_URL: string;
   readonly NEXT_PUBLIC_API_URL?: string;
-}
+};
 
 // Type guards
-export const isPlayerData = (
-  data: unknown
-): data is import('./index').PlayerData => {
+export const isPlayerData = (data: unknown): data is PlayerData => {
   return typeof data === 'object' && data !== null && 'playerId' in data;
 };
 
-export const isTrafficData = (
-  data: unknown
-): data is import('./index').TrafficData => {
+export const isTrafficData = (data: unknown): data is TrafficData => {
   return (
     typeof data === 'object' && data !== null && 'foreignLandingId' in data
   );

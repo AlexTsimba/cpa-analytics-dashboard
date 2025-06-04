@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -15,15 +15,15 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-interface PerformanceMetric {
+type PerformanceMetric = {
   name: string;
   value: number;
   unit: string;
   timestamp: number;
   phase?: string;
-}
+};
 
-interface PerformanceData {
+type PerformanceData = {
   summary: {
     totalDuration: number;
     memoryUsage: {
@@ -43,9 +43,9 @@ interface PerformanceData {
       endTime: number;
     }
   >;
-}
+};
 
-export function PerformanceDashboard() {
+export const PerformanceDashboard = () => {
   const [performanceData, setPerformanceData] =
     useState<PerformanceData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -127,14 +127,20 @@ export function PerformanceDashboard() {
   }, []);
 
   const formatDuration = (ms: number): string => {
-    if (ms < 1000) return `${ms}ms`;
-    if (ms < 60000) return `${(ms / 1000).toFixed(1)}s`;
+    if (ms < 1000) {
+      return `${ms}ms`;
+    }
+    if (ms < 60000) {
+      return `${(ms / 1000).toFixed(1)}s`;
+    }
     return `${(ms / 60000).toFixed(1)}m`;
   };
 
   const formatMemory = (bytes: number): string => {
     const mb = bytes / (1024 * 1024);
-    if (mb < 1024) return `${mb.toFixed(1)}MB`;
+    if (mb < 1024) {
+      return `${mb.toFixed(1)}MB`;
+    }
     return `${(mb / 1024).toFixed(1)}GB`;
   };
 
@@ -152,10 +158,16 @@ export function PerformanceDashboard() {
     };
 
     const threshold = thresholds[phaseName];
-    if (!threshold) return 'success';
+    if (!threshold) {
+      return 'success';
+    }
 
-    if (duration > threshold * 1.5) return 'error';
-    if (duration > threshold) return 'warning';
+    if (duration > threshold * 1.5) {
+      return 'error';
+    }
+    if (duration > threshold) {
+      return 'warning';
+    }
     return 'success';
   };
 
@@ -169,9 +181,9 @@ export function PerformanceDashboard() {
           </CardHeader>
           <CardContent>
             <div className="animate-pulse space-y-2">
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+              <div className="h-4 bg-gray-200 rounded w-3/4" />
+              <div className="h-4 bg-gray-200 rounded w-1/2" />
+              <div className="h-4 bg-gray-200 rounded w-2/3" />
             </div>
           </CardContent>
         </Card>
@@ -340,4 +352,4 @@ export function PerformanceDashboard() {
       </Card>
     </div>
   );
-}
+};

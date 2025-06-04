@@ -5,11 +5,11 @@
  * environment variables with proper type checking and default values.
  */
 
-import {
-  GoogleSheetsConfig,
-  AuthConfig,
+import type {
   AnalyticsConfig,
+  AuthConfig,
   FeatureFlags,
+  GoogleSheetsConfig,
   RateLimitConfig,
 } from '@/types/env';
 

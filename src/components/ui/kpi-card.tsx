@@ -1,7 +1,7 @@
 'use client';
 
 import { cva, type VariantProps } from 'class-variance-authority';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
@@ -37,9 +37,7 @@ const kpiCardVariants = cva(
   }
 );
 
-export interface KpiCardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof kpiCardVariants> {
+export type KpiCardProps = {
   title: string;
   value: string | number;
   previousValue?: string | number;
@@ -47,7 +45,8 @@ export interface KpiCardProps
   precision?: number;
   loading?: boolean;
   error?: boolean;
-}
+} & React.HTMLAttributes<HTMLDivElement> &
+  VariantProps<typeof kpiCardVariants>;
 
 // Main KPI Card Component
 const KpiCard = React.forwardRef<HTMLDivElement, KpiCardProps>(
@@ -70,8 +69,12 @@ const KpiCard = React.forwardRef<HTMLDivElement, KpiCardProps>(
   ) => {
     // Calculate trend if previous value is provided
     const trend = React.useMemo(() => {
-      if (trendProp) return trendProp;
-      if (!previousValue || loading || error) return 'none';
+      if (trendProp) {
+        return trendProp;
+      }
+      if (!previousValue || loading || error) {
+        return 'none';
+      }
 
       const current = typeof value === 'string' ? parseFloat(value) : value;
       const previous =
@@ -79,20 +82,32 @@ const KpiCard = React.forwardRef<HTMLDivElement, KpiCardProps>(
           ? parseFloat(previousValue)
           : previousValue;
 
-      if (isNaN(current) || isNaN(previous)) return 'none';
-      if (current > previous) return 'positive';
-      if (current < previous) return 'negative';
+      if (isNaN(current) || isNaN(previous)) {
+        return 'none';
+      }
+      if (current > previous) {
+        return 'positive';
+      }
+      if (current < previous) {
+        return 'negative';
+      }
       return 'neutral';
     }, [value, previousValue, trendProp, loading, error]);
 
     // Format value based on type
     const formatValue = (val: string | number) => {
-      if (loading) return '---';
-      if (error) return 'Error';
+      if (loading) {
+        return '---';
+      }
+      if (error) {
+        return 'Error';
+      }
 
       const numVal = typeof val === 'string' ? parseFloat(val) : val;
 
-      if (isNaN(numVal)) return val;
+      if (isNaN(numVal)) {
+        return val;
+      }
 
       switch (format) {
         case 'currency':
@@ -113,7 +128,9 @@ const KpiCard = React.forwardRef<HTMLDivElement, KpiCardProps>(
 
     // Calculate percentage change
     const getPercentageChange = () => {
-      if (!previousValue || loading || error) return null;
+      if (!previousValue || loading || error) {
+        return null;
+      }
 
       const current = typeof value === 'string' ? parseFloat(value) : value;
       const previous =
@@ -121,7 +138,9 @@ const KpiCard = React.forwardRef<HTMLDivElement, KpiCardProps>(
           ? parseFloat(previousValue)
           : previousValue;
 
-      if (isNaN(current) || isNaN(previous) || previous === 0) return null;
+      if (isNaN(current) || isNaN(previous) || previous === 0) {
+        return null;
+      }
 
       const change = ((current - previous) / previous) * 100;
       return change.toFixed(1);
@@ -131,9 +150,15 @@ const KpiCard = React.forwardRef<HTMLDivElement, KpiCardProps>(
 
     // Trend icon component
     const TrendIcon = () => {
-      if (trend === 'positive') return <TrendingUp className="h-4 w-4" />;
-      if (trend === 'negative') return <TrendingDown className="h-4 w-4" />;
-      if (trend === 'neutral') return <Minus className="h-4 w-4" />;
+      if (trend === 'positive') {
+        return <TrendingUp className="h-4 w-4" />;
+      }
+      if (trend === 'negative') {
+        return <TrendingDown className="h-4 w-4" />;
+      }
+      if (trend === 'neutral') {
+        return <Minus className="h-4 w-4" />;
+      }
       return null;
     };
 
@@ -215,7 +240,9 @@ const KpiMetric = React.forwardRef<
     const formatValue = (val: string | number) => {
       const numVal = typeof val === 'string' ? parseFloat(val) : val;
 
-      if (isNaN(numVal)) return val;
+      if (isNaN(numVal)) {
+        return val;
+      }
 
       switch (format) {
         case 'currency':
