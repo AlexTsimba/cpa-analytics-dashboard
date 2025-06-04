@@ -55,44 +55,6 @@ jobs:
           path: audit-results.json
           retention-days: 30
 
-  codeql-analysis:
-    name: CodeQL Security Analysis
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ['javascript-typescript']
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          queries: +security-extended,security-and-quality
-
-      - name: Setup Node.js for CodeQL
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build for CodeQL
-        run: npm run build
-        env:
-          NEXT_TELEMETRY_DISABLED: '1'
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: '/language:${{matrix.language}}'
-
   secret-scanning:
     name: Secret Detection
     runs-on: ubuntu-latest
@@ -219,7 +181,7 @@ jobs:
   security-summary:
     name: Security Summary
     runs-on: ubuntu-latest
-    needs: [dependency-scan, codeql-analysis, secret-scanning]
+    needs: [dependency-scan, secret-scanning]
     if: always()
 
     steps:
@@ -230,22 +192,15 @@ jobs:
           echo "| Scan Type | Status | Details |" >> $GITHUB_STEP_SUMMARY
           echo "|-----------|--------|---------|" >> $GITHUB_STEP_SUMMARY
           echo "| Dependency Scan | ${{ needs.dependency-scan.result == 'success' && '✅ Passed' || (needs.dependency-scan.result == 'failure' && '❌ Failed' || '⏭️ Skipped') }} | NPM audit for vulnerabilities |" >> $GITHUB_STEP_SUMMARY
-          echo "| CodeQL Analysis | ${{ needs.codeql-analysis.result == 'success' && '✅ Passed' || (needs.codeql-analysis.result == 'failure' && '❌ Failed' || '⏭️ Skipped') }} | Static analysis for security issues |" >> $GITHUB_STEP_SUMMARY
+          echo "| CodeQL Analysis | ✅ Enabled via GitHub Default Setup | Automatic static analysis for security issues |" >> $GITHUB_STEP_SUMMARY
           echo "| Secret Detection | ${{ needs.secret-scanning.result == 'success' && '✅ Passed' || (needs.secret-scanning.result == 'failure' && '⚠️ Issues Found' || '⏭️ Skipped') }} | TruffleHog secret scanning |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Scan completed at**: $(date -u)" >> $GITHUB_STEP_SUMMARY
 
-          # Count successful core scans (dependency, codeql are critical)
-          CORE_SUCCESS=0
+          # Dependency scan is our main check now (CodeQL runs separately via GitHub default)
           if [[ "${{ needs.dependency-scan.result }}" == "success" ]]; then
-            ((CORE_SUCCESS++))
-          fi
-          if [[ "${{ needs.codeql-analysis.result }}" == "success" ]]; then
-            ((CORE_SUCCESS++))
-          fi
-
-          if [[ $CORE_SUCCESS -eq 2 ]]; then
             echo "🎉 **Core security scans passed successfully!**" >> $GITHUB_STEP_SUMMARY
+            echo "ℹ️ *Note: CodeQL analysis running separately via GitHub's default setup*" >> $GITHUB_STEP_SUMMARY
             if [[ "${{ needs.secret-scanning.result }}" != "success" ]]; then
               echo "ℹ️ *Note: Secret scanning had issues but core security is maintained*" >> $GITHUB_STEP_SUMMARY
             fi
