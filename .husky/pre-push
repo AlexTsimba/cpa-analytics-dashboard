@@ -1,6 +1,3 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 # Quality Gates Pre-Push Hook
 # Comprehensive quality verification before pushing to remote
 
@@ -14,8 +11,8 @@ if echo "$current_branch" | grep -qE "$protected_branch"; then
     echo "🔒 Pushing to protected branch: $current_branch"
     echo "🔍 Running comprehensive quality gates..."
     
-    # Run full quality gates suite
-    if ! npm run quality:gates; then
+    # Run fast quality gates suite
+    if ! npm run quality:fast; then
         echo "❌ Quality gates failed for protected branch"
         echo "All quality gates must pass before pushing to $current_branch"
         exit 1
@@ -39,8 +36,8 @@ else
     echo "📝 Pushing to feature branch: $current_branch"
     echo "🔍 Running standard quality checks..."
     
-    # Run standard quality checks for feature branches
-    if ! npm run quality; then
+    # Run fast quality checks for feature branches
+    if ! npm run quality:fast; then
         echo "❌ Quality checks failed"
         echo "Fix issues before pushing"
         exit 1

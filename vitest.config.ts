@@ -55,10 +55,20 @@ export default defineConfig({
       all: true,
     },
 
-    // Enhanced test execution configuration
-    testTimeout: 10000,
-    hookTimeout: 10000,
-    teardownTimeout: 5000,
+    // Performance optimizations (conservative settings)
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        minThreads: 1,
+        maxThreads: 1, // Single thread to avoid worker issues
+        useAtomics: false, // Disable atomics to avoid issues
+      },
+    },
+
+    // Optimized test execution configuration
+    testTimeout: 5000, // Reduced from 10s
+    hookTimeout: 5000, // Reduced from 10s
+    teardownTimeout: 2000, // Reduced from 5s
 
     // UI and reporting
     ui: true,

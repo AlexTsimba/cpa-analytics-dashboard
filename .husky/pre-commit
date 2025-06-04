@@ -18,32 +18,12 @@ echo "📁 Checking $(echo "$STAGED_FILES" | wc -l) staged files..."
 # Check if there are TypeScript/JavaScript files
 TS_JS_FILES=$(echo "$STAGED_FILES" | grep -E '\.(ts|tsx|js|jsx)$' || true)
 
-# Always run TypeScript compilation if there are any relevant files
-echo "🔧 TypeScript compilation..."
-if ! npm run type-check > /dev/null 2>&1; then
-    echo "❌ TypeScript compilation failed"
-    echo "Run 'npm run type-check' to see details"
+# Run parallel quality checks for faster execution
+echo "🔧 Running parallel checks (TypeScript, ESLint, Prettier)..."
+if ! npm run quality:parallel > /dev/null 2>&1; then
+    echo "❌ Quality checks failed"
+    echo "Run 'npm run quality:parallel' to see details"
     exit 1
-fi
-
-# Run ESLint only if there are TS/JS files
-if [ -n "$TS_JS_FILES" ]; then
-    echo "🧹 ESLint check..."
-    if ! npx eslint $TS_JS_FILES --max-warnings 0 --quiet --no-warn-ignored; then
-        echo "❌ ESLint found issues"
-        echo "Run 'npm run lint:fix' to auto-fix issues"
-        exit 1
-    fi
-
-    echo "💅 Prettier check..."
-    if ! npx prettier --check $TS_JS_FILES > /dev/null 2>&1; then
-        echo "❌ Code formatting issues found"
-        echo "Run 'npm run format' to fix formatting"
-        exit 1
-    fi
-else
-    echo "🧹 ESLint check: ✅ No TS/JS files to check"
-    echo "💅 Prettier check: ✅ No TS/JS files to check"
 fi
 
 # Always run tests

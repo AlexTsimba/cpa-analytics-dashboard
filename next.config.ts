@@ -15,7 +15,25 @@ const nextConfig: NextConfig = {
 
   // Experimental features
   experimental: {
-    // Enable experimental features here
+    // Enable optimized package imports
+    optimizePackageImports: [
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-slot',
+      'lucide-react',
+    ],
+  },
+
+  // Performance optimizations
+  typescript: {
+    // Skip type checking during build (handled separately)
+    ignoreBuildErrors: process.env['CI'] === 'true' ? false : true,
+  },
+
+  // Compiler optimizations
+  compiler: {
+    // Remove console logs in production
+    removeConsole:
+      process.env['NODE_ENV'] === 'production' ? { exclude: ['error'] } : false,
   },
 
   // External packages that should not be bundled by webpack
