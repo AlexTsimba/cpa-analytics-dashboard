@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-export default function Home() {
+const Home = () => {
   return (
     <main className="min-h-screen bg-background p-6">
       <div className="mx-auto max-w-7xl space-y-8">
@@ -256,4 +256,6 @@ export default function Home() {
       </div>
     </main>
   );
-}
+};
+
+export default Home;

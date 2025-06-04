@@ -7,7 +7,7 @@
 
 declare global {
   namespace NodeJS {
-    interface ProcessEnv {
+    type ProcessEnv = {
       // -----------------------------------------------------------------------------
       // APPLICATION SETTINGS
       // -----------------------------------------------------------------------------

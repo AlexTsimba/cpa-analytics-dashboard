@@ -110,7 +110,7 @@ const quickFilters = [
   { label: 'Needs Review', value: 'review', count: 3 },
 ];
 
-export default function ComponentShowcase() {
+const ComponentShowcase = () => {
   // Demo handlers (replace with actual implementations)
   const handleDateChange = (_range: string) => {
     // Date range changed: range
@@ -468,4 +468,6 @@ export default function ComponentShowcase() {
       </div>
     </div>
   );
-}
+};
+
+export default ComponentShowcase;

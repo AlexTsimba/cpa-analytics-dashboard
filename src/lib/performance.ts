@@ -206,8 +206,7 @@ export class PerformanceMonitor {
     );
     for (const metric of phaseMetrics) {
       const phaseName = metric.name.replace('_duration', '');
-      if (!phasesReport[phaseName]) {
-        phasesReport[phaseName] = {
+      phasesReport[phaseName] ??= {
           duration: metric.value,
           startTime: metric.timestamp - metric.value,
           endTime: metric.timestamp,
@@ -216,7 +215,6 @@ export class PerformanceMonitor {
               m.tags?.['phase'] === phaseName || m.name.startsWith(phaseName)
           ),
         };
-      }
     }
 
     return {
@@ -224,7 +222,7 @@ export class PerformanceMonitor {
         totalDuration: now,
         memoryUsage,
         timestamp: Date.now(),
-        environment: process.env.NODE_ENV || 'development',
+        environment: process.env.NODE_ENV,
       },
       metrics: [...this.metrics],
       phases: phasesReport,
@@ -244,7 +242,7 @@ export class PerformanceMonitor {
         metric.value.toString(),
         metric.unit,
         metric.timestamp.toString(),
-        JSON.stringify(metric.tags || {}),
+        JSON.stringify(metric.tags ?? {}),
       ]);
 
       return [headers, ...rows].map((row) => row.join(',')).join('\n');

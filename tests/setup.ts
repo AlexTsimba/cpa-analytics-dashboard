@@ -4,10 +4,11 @@ import { cleanup } from '@testing-library/react';
 import React from 'react';
 import { mockLifecycle, mockApiServer } from './helpers/mock-helpers';
 import { environmentSetup } from './helpers/environment-helpers';
+import type { WaitForOptions } from './helpers/async-test-helpers';
 
 // Set NODE_ENV for tests
 Object.assign(process.env, { NODE_ENV: 'test' });
-process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000';
+process.env['NEXT_PUBLIC_APP_URL'] = 'http://localhost:3000';
 
 // Mock environment variables for tests
 Object.defineProperty(window, 'ENV', {
@@ -76,7 +77,7 @@ vi.mock('next/image', () => ({
 
 // Mock Next.js Link component
 vi.mock('next/link', () => ({
-  default: ({ children, href, ...props }: any) => {
+  default: ({ children, href, ...props }: { children: React.ReactNode; href?: string; [key: string]: any }) => {
     return React.createElement('a', { href, ...props }, children);
   },
 }));
@@ -111,7 +112,7 @@ vi.mock('next/dynamic', () => ({
 declare global {
   const testUtils: {
     createMockProps: (overrides?: any) => any;
-    waitFor: typeof import('./helpers/async-test-helpers').waitForCondition;
+    waitFor: (condition: () => boolean | Promise<boolean>, options?: WaitForOptions) => Promise<void>;
     mockApi: typeof mockApiServer;
     env: typeof environmentSetup;
   };
@@ -125,7 +126,7 @@ declare global {
   }),
   waitFor: async (condition: () => any, options?: any) => {
     const { waitForCondition } = await import('./helpers/async-test-helpers');
-    return waitForCondition(condition, options);
+    return waitForCondition(condition, options as WaitForOptions);
   },
   mockApi: mockApiServer,
   env: environmentSetup,

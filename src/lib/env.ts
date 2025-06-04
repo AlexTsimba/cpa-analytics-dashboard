@@ -30,7 +30,7 @@ export function getEnvVar(key: string, defaultValue?: string): string {
     throw new Error(`Missing required environment variable: ${key}`);
   }
 
-  return value || defaultValue || '';
+  return value ?? defaultValue ?? '';
 }
 
 /**
@@ -39,7 +39,7 @@ export function getEnvVar(key: string, defaultValue?: string): string {
  * @param defaultValue - Default value if not set
  */
 export function getOptionalEnvVar(key: string, defaultValue = ''): string {
-  return process.env[key] || defaultValue;
+  return process.env[key] ?? defaultValue;
 }
 
 /**

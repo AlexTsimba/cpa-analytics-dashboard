@@ -8,6 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
+// Helper function to get input type
+const getInputType = (filterType: string): string => {
+  if (filterType === 'date') return 'date';
+  if (filterType === 'number') return 'number';
+  return 'text';
+};
+
 // Filter Container Variants
 const filterBarVariants = cva(
   'flex flex-wrap items-center gap-3 p-4 rounded-lg border bg-card/50 backdrop-blur-sm',
@@ -131,7 +138,7 @@ const FilterBar = React.forwardRef<HTMLDivElement, FilterBarProps>(
                 className="flex items-center gap-1 px-2 py-1"
               >
                 <span className="text-xs">
-                  {filter.label}: {filter.displayValue || filter.value}
+                  {filter.label}: {filter.displayValue ?? filter.value}
                 </span>
                 <button
                   onClick={() => onFilterRemove?.(filter.id)}
@@ -247,13 +254,7 @@ const FilterOption = React.forwardRef<
       </label>
       <div className="flex gap-2">
         <input
-          type={
-            filter.type === 'date'
-              ? 'date'
-              : filter.type === 'number'
-                ? 'number'
-                : 'text'
-          }
+          type={getInputType(filter.type)}
           placeholder={`Enter ${filter.label.toLowerCase()}`}
           value={value}
           onChange={(e) => setValue(e.target.value)}

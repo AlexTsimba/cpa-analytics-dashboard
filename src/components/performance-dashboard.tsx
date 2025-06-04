@@ -337,7 +337,7 @@ export const PerformanceDashboard = () => {
                     </td>
                     <td className="py-2">
                       <span className="px-2 py-1 bg-gray-100 rounded text-xs">
-                        {metric.phase || 'N/A'}
+                        {metric.phase ?? 'N/A'}
                       </span>
                     </td>
                     <td className="py-2 text-xs text-muted-foreground">

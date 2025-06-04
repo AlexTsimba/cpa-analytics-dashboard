@@ -12,7 +12,7 @@ import {
   validateEnvironmentVariables,
 } from '@/lib/env';
 
-export default function EnvTestComponent() {
+const EnvTestComponent = () => {
   const handleTestEnvironment = () => {
     try {
       // eslint-disable-next-line no-console
@@ -35,10 +35,10 @@ export default function EnvTestComponent() {
 
       // Test client-side variables
       const clientVars = {
-        appUrl: process.env.NEXT_PUBLIC_APP_URL,
-        useMockData: process.env.NEXT_PUBLIC_USE_MOCK_DATA,
-        enableDarkMode: process.env.NEXT_PUBLIC_ENABLE_DARK_MODE,
-        dataRefreshInterval: process.env.NEXT_PUBLIC_DATA_REFRESH_INTERVAL,
+        appUrl: process.env['NEXT_PUBLIC_APP_URL'],
+        useMockData: process.env['NEXT_PUBLIC_USE_MOCK_DATA'],
+        enableDarkMode: process.env['NEXT_PUBLIC_ENABLE_DARK_MODE'],
+        dataRefreshInterval: process.env['NEXT_PUBLIC_DATA_REFRESH_INTERVAL'],
       };
       // eslint-disable-next-line no-console
       console.log('🌐 Client-side Variables:', clientVars);
@@ -67,4 +67,6 @@ export default function EnvTestComponent() {
       </button>
     </div>
   );
-}
+};
+
+export default EnvTestComponent;

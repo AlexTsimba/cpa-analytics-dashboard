@@ -2,13 +2,13 @@
  * Performance Reporting and Alerting System
  */
 
-import { writeFileSync, existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import {
   checkPerformanceThresholds,
   compareWithBaseline,
-  type PerformanceReport,
   type PerformanceMetric,
+  type PerformanceReport,
 } from './performance';
 import { getPerformanceConfig } from './performance-config';
 
@@ -217,7 +217,7 @@ export class PerformanceReporter {
   }
 
   private outputToConsole(summary: string): void {
-    console.warn('\n' + summary);
+    console.warn(`\n${summary}`);
 
     if (this.alerts.length > 0) {
       console.warn('\n🚨 Performance Alerts:');

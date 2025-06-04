@@ -185,7 +185,7 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
                   <Button variant="outline" size="sm">
                     <Calendar className="h-4 w-4 mr-2" />
                     {dateRangePresets.find((p) => p.value === selectedDateRange)
-                      ?.label || 'Select range'}
+                      ?.label ?? 'Select range'}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
@@ -227,7 +227,7 @@ const PageHeader = React.forwardRef<HTMLDivElement, PageHeaderProps>(
               return (
                 <Button
                   key={index}
-                  variant={action.variant || 'outline'}
+                  variant={action.variant ?? 'outline'}
                   size="sm"
                   onClick={action.onClick}
                 >
@@ -321,23 +321,44 @@ const PageTitle = React.forwardRef<
     description?: string;
   }
 >(({ className, level = 1, description, children, ...props }, ref) => {
-  const HeadingComponent = level === 1 ? 'h1' : level === 2 ? 'h2' : 'h3';
-
   return (
     <div className="space-y-1">
-      <HeadingComponent
-        ref={ref as React.RefObject<HTMLHeadingElement>}
-        className={cn(
-          'font-bold tracking-tight text-foreground',
-          level === 1 && 'text-2xl',
-          level === 2 && 'text-xl',
-          level === 3 && 'text-lg',
-          className
-        )}
-        {...props}
-      >
-        {children}
-      </HeadingComponent>
+      {level === 1 && (
+        <h1
+          ref={ref as React.RefObject<HTMLHeadingElement>}
+          className={cn(
+            'font-bold tracking-tight text-foreground text-2xl',
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </h1>
+      )}
+      {level === 2 && (
+        <h2
+          ref={ref as React.RefObject<HTMLHeadingElement>}
+          className={cn(
+            'font-bold tracking-tight text-foreground text-xl',
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </h2>
+      )}
+      {level === 3 && (
+        <h3
+          ref={ref as React.RefObject<HTMLHeadingElement>}
+          className={cn(
+            'font-bold tracking-tight text-foreground text-lg',
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </h3>
+      )}
       {description && <p className="text-muted-foreground">{description}</p>}
     </div>
   );
