@@ -49,7 +49,6 @@ jobs:
     timeout-minutes: 15
     outputs:
       cache-hit: ${{ steps.cache-dependencies.outputs.cache-hit }}
-      build-cache-key: ${{ steps.build-cache.outputs.cache-primary-key }}
 
     steps:
       - name: 📥 Checkout code
@@ -110,7 +109,7 @@ jobs:
 
       # Build cache for reuse in deployment jobs
       - name: 💾 Cache build artifacts
-        id: build-cache
+        id: build-cache-save
         uses: actions/cache/save@v4
         with:
           path: |
@@ -237,18 +236,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      # Restore build cache
-      - name: 📦 Restore build cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            .next/cache
-            .next/static
-            .next/standalone
-          key: ${{ needs.quality-assurance.outputs.build-cache-key }}
-          fail-on-cache-miss: false
-
-      # Restore dependencies
+      # Restore dependencies from cache
       - name: 📦 Restore dependencies
         uses: actions/cache/restore@v4
         with:
@@ -256,6 +244,8 @@ jobs:
             ~/.npm
             node_modules
           key: ${{ runner.os }}-deps-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
 
       - name: 📥 Install dependencies
         if: needs.quality-assurance.outputs.cache-hit != 'true'
@@ -264,9 +254,8 @@ jobs:
       - name: 🎭 Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      # Build if not cached
+      # Always build for E2E tests to ensure fresh build
       - name: 🏗️ Build application
-        if: steps.cache-build.outputs.cache-hit != 'true'
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: '1'
@@ -325,7 +314,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      # Restore dependencies and build cache
+      # Restore dependencies from cache
       - name: 📦 Restore dependencies
         uses: actions/cache/restore@v4
         with:
@@ -333,16 +322,8 @@ jobs:
             ~/.npm
             node_modules
           key: ${{ runner.os }}-deps-${{ hashFiles('**/package-lock.json') }}
-
-      - name: 📦 Restore build cache
-        uses: actions/cache/restore@v4
-        with:
-          path: |
-            .next/cache
-            .next/static
-            .next/standalone
-          key: ${{ needs.quality-assurance.outputs.build-cache-key }}
-          fail-on-cache-miss: false
+          restore-keys: |
+            ${{ runner.os }}-deps-
 
       - name: 📥 Install dependencies
         if: needs.quality-assurance.outputs.cache-hit != 'true'
