@@ -115,7 +115,7 @@ export const AffiliateDashboard = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <main className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -345,6 +345,6 @@ export const AffiliateDashboard = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 };

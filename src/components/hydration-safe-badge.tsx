@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 
-interface HydrationSafeBadgeProps {
+type HydrationSafeBadgeProps = {
   children: React.ReactNode;
   variant?:
     | 'default'
@@ -15,14 +15,14 @@ interface HydrationSafeBadgeProps {
     | 'info';
   className?: string;
   fallback?: React.ReactNode;
-}
+};
 
-export function HydrationSafeBadge({
+export const HydrationSafeBadge = ({
   children,
   variant = 'secondary',
   className = '',
   fallback = '...',
-}: HydrationSafeBadgeProps) {
+}: HydrationSafeBadgeProps) => {
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
@@ -42,4 +42,4 @@ export function HydrationSafeBadge({
       {children}
     </Badge>
   );
-}
+};

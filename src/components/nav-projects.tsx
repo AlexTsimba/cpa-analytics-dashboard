@@ -3,9 +3,9 @@
 import {
   Folder,
   Forward,
+  type LucideIcon,
   MoreHorizontal,
   Trash2,
-  type LucideIcon,
 } from 'lucide-react';
 
 import {
@@ -25,7 +25,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
-export function NavProjects({
+export const NavProjects = ({
   projects,
 }: {
   projects: {
@@ -33,7 +33,7 @@ export function NavProjects({
     url: string;
     icon: LucideIcon;
   }[];
-}) {
+}) => {
   const { isMobile } = useSidebar();
 
   return (
@@ -86,4 +86,4 @@ export function NavProjects({
       </SidebarMenu>
     </SidebarGroup>
   );
-}
+};

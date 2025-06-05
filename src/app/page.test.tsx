@@ -14,7 +14,7 @@ describe('Home Page', () => {
     render(<Home />);
     const heading = screen.getByRole('heading', { level: 1 });
     expect(heading).toBeInTheDocument();
-    expect(heading).toHaveTextContent('CPA Analytics Dashboard');
+    expect(heading).toHaveTextContent('Affiliate Dashboard');
   });
 
   it('has proper semantic structure', () => {
