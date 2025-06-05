@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { formatNumber } from '@/lib/format';
 
 type PerformanceMetric = {
   name: string;
@@ -332,7 +333,7 @@ export const PerformanceDashboard = () => {
                   <tr key={index} className="border-b">
                     <td className="py-2 font-medium">{metric.name}</td>
                     <td className="py-2 font-mono">
-                      {metric.value.toLocaleString()}
+                      {formatNumber(metric.value)}
                       {metric.unit}
                     </td>
                     <td className="py-2">

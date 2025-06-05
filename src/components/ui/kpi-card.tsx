@@ -6,26 +6,26 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-// KPI Card Variants
+// KPI Card Variants - Keitaro-inspired minimalist design
 const kpiCardVariants = cva(
-  'rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200',
+  'rounded-md border bg-card text-card-foreground transition-all duration-200',
   {
     variants: {
       variant: {
-        default: 'hover:shadow-md',
-        elevated: 'shadow-lg hover:shadow-xl',
-        flat: 'shadow-none border-muted',
-        outlined: 'border-2 shadow-none hover:shadow-sm',
+        default: 'border-border shadow-none hover:bg-accent/30',
+        elevated: 'border-border shadow-sm hover:shadow-md',
+        flat: 'border-border shadow-none',
+        outlined: 'border-border hover:border-primary/50',
       },
       size: {
         sm: 'p-3',
         default: 'p-4',
-        lg: 'p-6',
+        lg: 'p-5',
       },
       trend: {
-        positive: 'border-l-4 border-l-chart-1',
-        negative: 'border-l-4 border-l-destructive',
-        neutral: 'border-l-4 border-l-muted-foreground',
+        positive: 'border-l-2 border-l-success',
+        negative: 'border-l-2 border-l-destructive',
+        neutral: 'border-l-2 border-l-muted-foreground',
         none: '',
       },
     },
