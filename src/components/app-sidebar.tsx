@@ -49,7 +49,8 @@ type NavItem = {
   badge?: string;
 };
 
-const navigationItems: NavItem[] = [
+// Static navigation items - prevents hydration mismatches
+const NAVIGATION_ITEMS: NavItem[] = [
   {
     title: 'Overview',
     href: '/',
@@ -71,15 +72,15 @@ const navigationItems: NavItem[] = [
     href: '/quality/cohorts',
     icon: User2,
   },
-];
+] as const;
 
-const bottomNavItems: NavItem[] = [
+const BOTTOM_NAV_ITEMS: NavItem[] = [
   {
     title: 'Settings',
     href: '/settings',
     icon: Settings,
   },
-];
+] as const;
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
@@ -141,7 +142,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigationItems.map((item) => (
+              {NAVIGATION_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
@@ -169,7 +170,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
             <SidebarMenu>
-              {bottomNavItems.map((item) => (
+              {BOTTOM_NAV_ITEMS.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
