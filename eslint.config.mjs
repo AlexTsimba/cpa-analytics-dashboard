@@ -1,20 +1,23 @@
 // @ts-check
 import { FlatCompat } from '@eslint/eslintrc';
-import eslint from '@eslint/js';
+import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import prettierConfig from 'eslint-config-prettier';
 
 const compat = new FlatCompat({
+  // import.meta.dirname is available after Node.js v20.11.0
   baseDirectory: import.meta.dirname,
+  recommendedConfig: js.configs.recommended,
 });
 
-/** @type {import('eslint').Linter.Config[]} */
 export default tseslint.config(
-  // Base ESLint recommended rules
-  eslint.configs.recommended,
+  // Base configuration
+  js.configs.recommended,
 
-  // Next.js configuration using compat for now
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  // Next.js configuration - using exact pattern from docs
+  ...compat.config({
+    extends: ['next/core-web-vitals', 'next/typescript'],
+  }),
 
   // TypeScript ESLint configuration
   ...tseslint.configs.recommended,
@@ -40,7 +43,7 @@ export default tseslint.config(
       ],
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-non-null-assertion': 'warn',
-      '@typescript-eslint/prefer-nullish-coalescing': 'warn', // Relaxed to warn
+      '@typescript-eslint/prefer-nullish-coalescing': 'warn',
       '@typescript-eslint/prefer-optional-chain': 'error',
       '@typescript-eslint/no-unnecessary-type-assertion': 'error',
       '@typescript-eslint/no-floating-promises': 'error',
@@ -51,10 +54,10 @@ export default tseslint.config(
         'error',
         { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
       ],
-      '@typescript-eslint/consistent-type-definitions': ['warn', 'type'], // Relaxed to warn
+      '@typescript-eslint/consistent-type-definitions': ['warn', 'type'],
       '@typescript-eslint/array-type': ['error', { default: 'array' }],
       '@typescript-eslint/prefer-as-const': 'error',
-      '@typescript-eslint/no-unnecessary-condition': 'warn', // Relaxed to warn
+      '@typescript-eslint/no-unnecessary-condition': 'warn',
 
       // General code quality rules
       'no-console': ['warn', { allow: ['warn', 'error'] }],
@@ -62,9 +65,9 @@ export default tseslint.config(
       'no-var': 'error',
       'prefer-const': 'error',
       'no-unused-expressions': 'error',
-      'prefer-template': 'warn', // Relaxed to warn
+      'prefer-template': 'warn',
       'object-shorthand': 'error',
-      'no-nested-ternary': 'warn', // Relaxed to warn
+      'no-nested-ternary': 'warn',
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       curly: ['error', 'all'],
 
@@ -76,7 +79,7 @@ export default tseslint.config(
       'react/self-closing-comp': 'error',
       'react/prefer-stateless-function': 'error',
       'react/function-component-definition': [
-        'warn', // Relaxed to warn for legacy components
+        'warn',
         {
           namedComponents: 'arrow-function',
           unnamedComponents: 'arrow-function',
@@ -85,7 +88,7 @@ export default tseslint.config(
 
       // Import organization
       'sort-imports': [
-        'warn', // Relaxed to warn
+        'warn',
         {
           ignoreCase: true,
           ignoreDeclarationSort: true,
