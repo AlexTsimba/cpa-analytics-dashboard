@@ -105,19 +105,100 @@ export abstract class BaseDataProvider implements DataProvider {
     if (!dateValue) return null;
 
     if (dateValue instanceof Date) {
-      return dateValue;
+      // Validate the date is not invalid
+      return isNaN(dateValue.getTime()) ? null : dateValue;
     }
 
     if (typeof dateValue === 'string') {
-      const parsed = new Date(dateValue);
-      return isNaN(parsed.getTime()) ? null : parsed;
+      // Handle empty or whitespace-only strings
+      const trimmed = dateValue.trim();
+      if (!trimmed) return null;
+
+      // Try parsing various common formats
+      const parsed = this.parseStringDate(trimmed);
+      return parsed && !isNaN(parsed.getTime()) ? parsed : null;
     }
 
     if (typeof dateValue === 'number') {
-      return new Date(dateValue);
+      // Handle Excel serial numbers (days since 1900-01-01, but Excel incorrectly treats 1900 as a leap year)
+      if (dateValue >= 1 && dateValue < 2958466) {
+        // Excel serial number range (1900-01-01 to 9999-12-31)
+        return this.parseExcelSerialDate(dateValue);
+      }
+
+      // Handle Unix timestamps (seconds or milliseconds)
+      if (dateValue > 0) {
+        // If less than year 2100 in seconds, likely a Unix timestamp in seconds
+        if (dateValue < 4102444800) {
+          return new Date(dateValue * 1000);
+        }
+        // Otherwise treat as milliseconds
+        return new Date(dateValue);
+      }
     }
 
     return null;
+  }
+
+  /**
+   * Parse various string date formats commonly found in Google Sheets
+   */
+  private parseStringDate(dateString: string): Date | null {
+    // ISO 8601 formats
+    if (dateString.match(/^\d{4}-\d{2}-\d{2}([T ]\d{2}:\d{2}:\d{2})?/)) {
+      return new Date(dateString);
+    }
+
+    // US format: MM/DD/YYYY or M/D/YYYY
+    if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+      return new Date(dateString);
+    }
+
+    // EU format: DD/MM/YYYY or D/M/YYYY (try parsing as EU if US parsing fails)
+    if (dateString.match(/^\d{1,2}\/\d{1,2}\/\d{4}$/)) {
+      const parts = dateString.split('/');
+      const usDate = new Date(`${parts[0]}/${parts[1]}/${parts[2]}`);
+
+      // If US parsing results in invalid date, try EU format
+      if (isNaN(usDate.getTime())) {
+        const euDate = new Date(`${parts[1]}/${parts[0]}/${parts[2]}`);
+        return isNaN(euDate.getTime()) ? null : euDate;
+      }
+
+      return usDate;
+    }
+
+    // DD-MM-YYYY or DD.MM.YYYY formats
+    if (dateString.match(/^\d{1,2}[-.]\d{1,2}[-.]\d{4}$/)) {
+      const parts = dateString.split(/[-.]/);
+      const date = new Date(`${parts[1]}/${parts[0]}/${parts[2]}`);
+      return isNaN(date.getTime()) ? null : date;
+    }
+
+    // Fallback to default parsing
+    const fallback = new Date(dateString);
+    return isNaN(fallback.getTime()) ? null : fallback;
+  }
+
+  /**
+   * Convert Excel serial number to JavaScript Date
+   * Excel uses 1900-01-01 as day 1, but incorrectly treats 1900 as a leap year
+   */
+  private parseExcelSerialDate(serialNumber: number): Date | null {
+    if (serialNumber < 1 || serialNumber > 2958466) {
+      return null; // Out of valid Excel date range
+    }
+
+    // Excel incorrectly considers 1900 a leap year, so adjust for dates after Feb 28, 1900
+    const adjustedSerial = serialNumber > 59 ? serialNumber - 1 : serialNumber;
+
+    // Start from 1899-12-30 (Excel's epoch) and add days
+    const excelEpoch = new Date(1899, 11, 30); // December 30, 1899
+    const resultDate = new Date(
+      excelEpoch.getTime() + adjustedSerial * 24 * 60 * 60 * 1000
+    );
+
+    return isNaN(resultDate.getTime()) ? null : resultDate;
   }
 
   protected normalizeNumber(value: unknown): number {

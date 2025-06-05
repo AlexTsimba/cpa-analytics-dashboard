@@ -38,18 +38,20 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
     const gsConfig = config;
 
     try {
+      // Validate configuration before attempting connection
+      this.validateConfiguration(gsConfig);
+
       // Initialize authentication based on type
       switch (gsConfig.authType) {
         case 'service-account': {
-          if (!gsConfig.credentials) {
-            throw new AuthenticationError(
-              'Service account credentials required',
-              this.name
+          // Comprehensive credential validation
+          const validatedCredentials =
+            this.validateAndReturnServiceAccountCredentials(
+              gsConfig.credentials
             );
-          }
 
           this.auth = new google.auth.GoogleAuth({
-            credentials: gsConfig.credentials,
+            credentials: validatedCredentials,
             scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
           });
           break;
@@ -62,25 +64,17 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
         }
         default: {
           throw new AuthenticationError(
-            'Invalid authentication type',
+            `Invalid authentication type: ${String(gsConfig.authType)}`,
             this.name
           );
         }
       }
 
-      // Get authenticated client
-      const authClient = this.auth;
+      // Validate authentication client initialization
+      // Note: this.auth is guaranteed to be set in the switch statement above
+      const authClient = await this.validateAuthenticationClient();
 
-      // Ensure auth client is available
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (!authClient) {
-        throw new AuthenticationError(
-          'Authentication client not initialized',
-          this.name
-        );
-      }
-
-      // Initialize Sheets client
+      // Initialize Sheets client with validated auth
       this.sheetsClient = google.sheets({
         version: 'v4',
         auth: authClient,
@@ -95,7 +89,6 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
 
       const latency = Date.now() - startTime;
 
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!response.data) {
         throw new ConnectionError(
           'No data received from spreadsheet',
@@ -148,7 +141,8 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
         dateTimeRenderOption: 'FORMATTED_STRING',
       });
 
-      if (!response.data.values) {
+      const responseData = response.data.values;
+      if (!responseData || responseData.length === 0) {
         return {
           records: [],
           totalCount: 0,
@@ -162,7 +156,7 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
       }
 
       // Transform raw data
-      const transformResult = await this.transform(response.data.values);
+      const transformResult = await this.transform(responseData);
 
       if (!transformResult.success || !transformResult.data) {
         throw new TransformationError(
@@ -341,6 +335,154 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
     }
   }
 
+  /**
+   * Validates the configuration object for required fields and proper structure
+   */
+  private validateConfiguration(config: GoogleSheetsConfig): void {
+    if (!config.spreadsheetId || typeof config.spreadsheetId !== 'string') {
+      throw new AuthenticationError(
+        'Valid spreadsheetId is required in configuration',
+        this.name
+      );
+    }
+
+    if (!config.authType || typeof config.authType !== 'string') {
+      throw new AuthenticationError(
+        'Authentication type is required in configuration',
+        this.name
+      );
+    }
+
+    // Validate spreadsheet ID format (Google Sheets IDs are alphanumeric with specific patterns)
+    const spreadsheetIdPattern = /^[a-zA-Z0-9-_]+$/;
+    if (!spreadsheetIdPattern.test(config.spreadsheetId)) {
+      throw new AuthenticationError('Invalid spreadsheet ID format', this.name);
+    }
+  }
+
+  /**
+   * Validates and returns service account credentials with proper typing
+   */
+  private validateAndReturnServiceAccountCredentials(
+    credentials: GoogleSheetsConfig['credentials']
+  ): NonNullable<GoogleSheetsConfig['credentials']> {
+    if (!credentials) {
+      throw new AuthenticationError(
+        'Service account credentials are required',
+        this.name
+      );
+    }
+
+    // Validate credential type
+    if (credentials.type !== 'service_account') {
+      throw new AuthenticationError(
+        'Credential type must be "service_account"',
+        this.name
+      );
+    }
+
+    // Required fields for service account credentials
+    const requiredFields = [
+      'project_id',
+      'private_key_id',
+      'private_key',
+      'client_email',
+      'client_id',
+      'auth_uri',
+      'token_uri',
+    ] as const;
+
+    const missingFields: string[] = [];
+
+    for (const field of requiredFields) {
+      if (!credentials[field] || typeof credentials[field] !== 'string') {
+        missingFields.push(field);
+      }
+    }
+
+    if (missingFields.length > 0) {
+      throw new AuthenticationError(
+        `Missing required credential fields: ${missingFields.join(', ')}`,
+        this.name
+      );
+    }
+
+    // Validate email format for service account
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(credentials.client_email)) {
+      throw new AuthenticationError(
+        'Invalid service account email format',
+        this.name
+      );
+    }
+
+    // Validate private key format
+    if (!credentials.private_key.includes('-----BEGIN PRIVATE KEY-----')) {
+      throw new AuthenticationError(
+        'Invalid private key format - must be a valid PEM private key',
+        this.name
+      );
+    }
+
+    // Validate URI formats
+    const uriPattern = /^https:\/\/.+/;
+    if (!uriPattern.test(credentials.auth_uri)) {
+      throw new AuthenticationError(
+        'Invalid auth_uri format - must be a valid HTTPS URL',
+        this.name
+      );
+    }
+
+    if (!uriPattern.test(credentials.token_uri)) {
+      throw new AuthenticationError(
+        'Invalid token_uri format - must be a valid HTTPS URL',
+        this.name
+      );
+    }
+
+    return credentials;
+  }
+
+  /**
+   * Validates that the authentication client can be created and is functional
+   */
+  private async validateAuthenticationClient(): Promise<GoogleAuth> {
+    if (!this.auth) {
+      throw new AuthenticationError(
+        'Authentication client not initialized',
+        this.name
+      );
+    }
+
+    try {
+      // Test that we can get a client from the auth instance
+      const authClient = await this.auth.getClient();
+      if (!authClient) {
+        throw new AuthenticationError(
+          'Failed to obtain authentication client',
+          this.name
+        );
+      }
+
+      // Test that we can get project ID
+      const projectId = await this.auth.getProjectId();
+      if (!projectId) {
+        throw new AuthenticationError(
+          'Failed to obtain project ID from credentials',
+          this.name
+        );
+      }
+
+      return this.auth;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new AuthenticationError(
+        `Authentication validation failed: ${message}`,
+        this.name
+      );
+    }
+  }
+
   private buildRange(
     config: GoogleSheetsConfig,
     query: AnalyticsQuery
@@ -410,7 +552,7 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
       switch (mappedField) {
         case 'timestamp':
         case 'date': {
-          const normalizedDate = this.normalizeDate(value);
+          const normalizedDate = this.normalizeGoogleSheetsDate(value);
           if (normalizedDate) {
             record.timestamp = normalizedDate;
           }
@@ -473,7 +615,6 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
     let filteredRecords = [...data.records];
 
     // Apply date range filter
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (query.dateRange) {
       filteredRecords = filteredRecords.filter((record) => {
         const recordDate = new Date(record.timestamp);
@@ -522,5 +663,65 @@ export class GoogleSheetsDataProvider extends BaseDataProvider {
       records: filteredRecords,
       totalCount: filteredRecords.length,
     };
+  }
+
+  /**
+   * Enhanced date normalization for Google Sheets specific formats
+   * Handles various formats that can come from Google Sheets API responses
+   */
+  private normalizeGoogleSheetsDate(dateValue: unknown): Date | null {
+    if (!dateValue) return null;
+
+    // Handle Google Sheets FORMATTED_STRING responses
+    if (typeof dateValue === 'string') {
+      const trimmed = dateValue.trim();
+
+      // Google Sheets often returns dates in specific formats
+      // Handle common Google Sheets date formats
+      const gsFormats = [
+        /^\d{1,2}\/\d{1,2}\/\d{4}$/, // M/D/YYYY or MM/DD/YYYY
+        /^\d{4}-\d{2}-\d{2}$/, // YYYY-MM-DD
+        /^\d{1,2}-\d{1,2}-\d{4}$/, // M-D-YYYY or MM-DD-YYYY
+        /^\d{1,2}\.\d{1,2}\.\d{4}$/, // M.D.YYYY or MM.DD.YYYY
+      ];
+
+      // Try specific Google Sheets formats first
+      for (const format of gsFormats) {
+        if (format.test(trimmed)) {
+          const parsed = new Date(trimmed);
+          if (!isNaN(parsed.getTime())) {
+            return this.validateDateRange(parsed);
+          }
+        }
+      }
+    }
+
+    // Fall back to base class normalization for other formats
+    const baseResult = this.normalizeDate(dateValue);
+    return baseResult ? this.validateDateRange(baseResult) : null;
+  }
+
+  /**
+   * Validate that the date is within a reasonable range for analytics data
+   * Prevents invalid dates that could cause runtime errors
+   */
+  private validateDateRange(date: Date): Date | null {
+    if (isNaN(date.getTime())) {
+      return null;
+    }
+
+    // Ensure date is within reasonable range for analytics data
+    const minDate = new Date('1990-01-01');
+    const maxDate = new Date();
+    maxDate.setFullYear(maxDate.getFullYear() + 10); // Allow future dates up to 10 years
+
+    if (date < minDate || date > maxDate) {
+      console.warn(
+        `Date ${date.toISOString()} is outside reasonable range for analytics data`
+      );
+      return null;
+    }
+
+    return date;
   }
 }
