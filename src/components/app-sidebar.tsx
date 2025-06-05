@@ -82,7 +82,9 @@ const BOTTOM_NAV_ITEMS: NavItem[] = [
   },
 ] as const;
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export const AppSidebar = ({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) => {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
@@ -253,4 +255,4 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
     </Sidebar>
   );
-}
+};

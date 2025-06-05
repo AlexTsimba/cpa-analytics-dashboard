@@ -13,13 +13,13 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-interface NavItem {
+type NavItem = {
   title: string;
   href: string;
   icon?: string;
   badge?: string;
   children?: NavItem[];
-}
+};
 
 const navigationItems: NavItem[] = [
   {
@@ -68,9 +68,9 @@ const navigationItems: NavItem[] = [
   },
 ];
 
-interface SidebarProps {
+type SidebarProps = {
   className?: string;
-}
+};
 
 export const Sidebar = ({ className }: SidebarProps) => {
   const pathname = usePathname();
@@ -83,7 +83,7 @@ export const Sidebar = ({ className }: SidebarProps) => {
   };
 
   const hasActiveChild = (item: NavItem) => {
-    return item.children?.some((child) => isActive(child.href)) || false;
+    return item.children?.some((child) => isActive(child.href)) ?? false;
   };
 
   return (

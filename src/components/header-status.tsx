@@ -2,7 +2,7 @@
 
 import { useLastUpdate } from '@/hooks/use-status';
 
-export function HeaderStatus() {
+export const HeaderStatus = () => {
   const lastUpdate = useLastUpdate();
 
   return (
@@ -10,4 +10,4 @@ export function HeaderStatus() {
       Last sync: <span className="text-foreground">{lastUpdate}</span>
     </div>
   );
-}
+};
