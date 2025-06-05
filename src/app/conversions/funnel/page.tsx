@@ -211,7 +211,7 @@ const FunnelAnalysisPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {funnel.steps.map((step, index) => (
+              {funnel.steps.map((step, _index) => (
                 <div key={step.name} className="flex items-center gap-4">
                   <div className="w-32 text-sm font-medium text-foreground">
                     {step.name}

@@ -15,8 +15,8 @@ export function ClientOnly({ children, fallback = null }: ClientOnlyProps) {
   }, []);
 
   if (!hasMounted) {
-    return <>{fallback}</>;
+    return fallback;
   }
 
-  return <>{children}</>;
+  return children;
 }

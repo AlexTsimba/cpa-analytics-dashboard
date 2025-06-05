@@ -186,7 +186,7 @@ export const TrafficOverview = () => {
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            {trafficData.countries.map((country, index) => (
+            {trafficData.countries.map((country, _index) => (
               <div
                 key={country.code}
                 className="flex items-center justify-between p-3 border border-border rounded-md bg-card/30"
