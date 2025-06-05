@@ -62,21 +62,6 @@ const navigationItems: NavItem[] = [
     icon: Target,
   },
   {
-    title: 'Funnel Analysis',
-    href: '/conversions/funnel',
-    icon: TrendingUp,
-  },
-  {
-    title: 'Attribution',
-    href: '/conversions/attribution',
-    icon: BarChart3,
-  },
-  {
-    title: 'Events',
-    href: '/conversions/events',
-    icon: Target,
-  },
-  {
     title: 'Quality',
     href: '/quality',
     icon: TrendingUp,
@@ -85,16 +70,6 @@ const navigationItems: NavItem[] = [
     title: 'Cohorts',
     href: '/quality/cohorts',
     icon: User2,
-  },
-  {
-    title: 'Campaigns',
-    href: '/quality/campaigns',
-    icon: BarChart3,
-  },
-  {
-    title: 'Traffic Quality',
-    href: '/quality/traffic',
-    icon: TrendingUp,
   },
 ];
 
