@@ -79,6 +79,7 @@
     "dist",
     "build",
     "e2e/**/*",
+    "scripts/**/*",
     "*.config.js",
     "coverage"
   ]

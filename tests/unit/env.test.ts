@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 
 import {
   getAppConfig,
-  getGoogleSheetsConfig,
   getAuthConfig,
   getAnalyticsConfig,
   getFeatureFlags,
@@ -24,13 +23,6 @@ describe('Environment Configuration', () => {
       expect(config).toHaveProperty('environment');
       expect(config).toHaveProperty('features');
       expect(config).toHaveProperty('analytics');
-    });
-  });
-
-  describe('getGoogleSheetsConfig', () => {
-    it('returns null when credentials are not available', () => {
-      const config = getGoogleSheetsConfig(false);
-      expect(config).toBeNull();
     });
   });
 

@@ -116,24 +116,14 @@ const getQualityColor = (quality: string | number) => {
 const QualityPage = () => {
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold text-foreground">
-            Quality Analysis
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Monitor traffic quality, cohort performance, and campaign integrity
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" className="text-xs">
-            Quality Report
-          </Button>
-          <Button size="sm" className="text-xs">
-            Setup Filters
-          </Button>
-        </div>
+      {/* Action Buttons */}
+      <div className="flex items-center justify-end gap-2">
+        <Button size="sm" variant="outline" className="text-xs">
+          Quality Report
+        </Button>
+        <Button size="sm" className="text-xs">
+          Setup Filters
+        </Button>
       </div>
 
       {/* Quality Overview Metrics */}

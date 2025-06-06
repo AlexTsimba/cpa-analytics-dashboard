@@ -8,19 +8,23 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import type { DataProviderConfig, SupabaseConfig } from '@/types/providers';
+import type { DataProviderConfig, PostgreSQLConfig } from '@/types/providers';
 import { analyticsService } from '@/services/AnalyticsService';
 
 export const DataProviderSettings = () => {
-  const [selectedType, setSelectedType] = useState<string>('supabase');
-  const [config, setConfig] = useState<Partial<SupabaseConfig>>({
-    name: 'My Supabase Database',
-    type: 'supabase',
+  const [selectedType, setSelectedType] = useState<string>('postgresql');
+  const [config, setConfig] = useState<Partial<PostgreSQLConfig>>({
+    name: 'Digital Ocean PostgreSQL',
+    type: 'postgresql',
     enabled: true,
     connectionStatus: 'disconnected',
-    url: '',
-    anonKey: '',
-    table: 'analytics_records',
+    host: '',
+    port: 5432,
+    database: '',
+    username: '',
+    password: '',
+    ssl: true,
+    table: 'players',
   });
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionResult, setConnectionResult] = useState<string>('');
@@ -28,8 +32,15 @@ export const DataProviderSettings = () => {
   const availableProviders = analyticsService.getAvailableProviders();
 
   const handleConnect = async () => {
-    if (!config.url || !config.anonKey) {
-      setConnectionResult('Please enter Supabase URL and anonymous key');
+    if (
+      !config.host ||
+      !config.database ||
+      !config.username ||
+      !config.password
+    ) {
+      setConnectionResult(
+        'Please enter all required PostgreSQL connection details'
+      );
       return;
     }
 
@@ -65,7 +76,7 @@ export const DataProviderSettings = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">Data Provider Settings</h2>
+        <h2 className="text-xl font-semibold">Data Provider Configuration</h2>
         <p className="text-muted-foreground">
           Configure your data source for the analytics dashboard
         </p>
@@ -84,7 +95,8 @@ export const DataProviderSettings = () => {
             >
               {availableProviders.map((type) => {
                 let displayName = type;
-                if (type === 'supabase') displayName = 'Supabase';
+                if (type === 'postgresql')
+                  displayName = 'Digital Ocean PostgreSQL';
                 else if (type === 'clickhouse') displayName = 'ClickHouse';
 
                 return (
@@ -96,7 +108,7 @@ export const DataProviderSettings = () => {
             </select>
           </div>
 
-          {selectedType === 'supabase' && (
+          {selectedType === 'postgresql' && (
             <>
               <div>
                 <label className="block text-sm font-medium mb-2">
@@ -107,40 +119,84 @@ export const DataProviderSettings = () => {
                   value={config.name ?? ''}
                   onChange={(e) => handleInputChange('name', e.target.value)}
                   className="w-full p-2 border rounded-md"
-                  placeholder="My Supabase Database"
+                  placeholder="Digital Ocean PostgreSQL"
                 />
               </div>
 
               <div>
+                <label className="block text-sm font-medium mb-2">Host *</label>
+                <input
+                  type="text"
+                  value={config.host ?? ''}
+                  onChange={(e) => handleInputChange('host', e.target.value)}
+                  className="w-full p-2 border rounded-md"
+                  placeholder="your-cluster-host.db.ondigitalocean.com"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Digital Ocean PostgreSQL cluster hostname
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Port *</label>
+                <input
+                  type="number"
+                  value={config.port ?? 5432}
+                  onChange={(e) => handleInputChange('port', e.target.value)}
+                  className="w-full p-2 border rounded-md"
+                  placeholder="5432"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Database port (usually 5432)
+                </p>
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium mb-2">
-                  Supabase URL *
+                  Database Name *
                 </label>
                 <input
                   type="text"
-                  value={config.url ?? ''}
-                  onChange={(e) => handleInputChange('url', e.target.value)}
+                  value={config.database ?? ''}
+                  onChange={(e) =>
+                    handleInputChange('database', e.target.value)
+                  }
                   className="w-full p-2 border rounded-md"
-                  placeholder="https://your-project.supabase.co"
+                  placeholder="cpa_analytics"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Find this in your Supabase project settings
+                  Name of your analytics database
                 </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Anonymous Key *
+                  Username *
+                </label>
+                <input
+                  type="text"
+                  value={config.username ?? ''}
+                  onChange={(e) =>
+                    handleInputChange('username', e.target.value)
+                  }
+                  className="w-full p-2 border rounded-md"
+                  placeholder="db_user"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Password *
                 </label>
                 <input
                   type="password"
-                  value={config.anonKey ?? ''}
-                  onChange={(e) => handleInputChange('anonKey', e.target.value)}
+                  value={config.password ?? ''}
+                  onChange={(e) =>
+                    handleInputChange('password', e.target.value)
+                  }
                   className="w-full p-2 border rounded-md"
-                  placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  placeholder="••••••••"
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Your Supabase project&apos;s anonymous/public key
-                </p>
               </div>
 
               <div>
@@ -152,48 +208,43 @@ export const DataProviderSettings = () => {
                   value={config.table ?? ''}
                   onChange={(e) => handleInputChange('table', e.target.value)}
                   className="w-full p-2 border rounded-md"
-                  placeholder="analytics_records"
+                  placeholder="players"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   Name of the table containing your analytics data
                 </p>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Service Role Key (Optional)
-                </label>
+              <div className="flex items-center space-x-2">
                 <input
-                  type="password"
-                  value={config.serviceRoleKey ?? ''}
+                  type="checkbox"
+                  checked={config.ssl ?? true}
                   onChange={(e) =>
-                    handleInputChange('serviceRoleKey', e.target.value)
+                    handleInputChange('ssl', e.target.checked.toString())
                   }
-                  className="w-full p-2 border rounded-md"
-                  placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  className="rounded"
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Only needed for administrative operations
+                <label className="text-sm font-medium">
+                  Use SSL Connection
+                </label>
+                <p className="text-xs text-muted-foreground">
+                  (Recommended for Digital Ocean)
                 </p>
               </div>
 
               <div className="bg-blue-50 p-4 rounded-md">
                 <h4 className="font-medium text-blue-900 mb-2">
-                  Supabase Setup
+                  Digital Ocean PostgreSQL Setup
                 </h4>
                 <p className="text-sm text-blue-800 mb-2">
-                  To connect to your Supabase database:
+                  To connect to your Digital Ocean PostgreSQL database:
                 </p>
                 <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                  <li>Create a Supabase project at supabase.com</li>
-                  <li>Set up your database schema for analytics data</li>
-                  <li>
-                    Copy your project URL and anonymous key from project
-                    settings
-                  </li>
-                  <li>
-                    Configure Row Level Security (RLS) for data protection
-                  </li>
+                  <li>Create a managed PostgreSQL cluster in Digital Ocean</li>
+                  <li>Configure SSL settings and firewall rules</li>
+                  <li>Create your analytics database and tables</li>
+                  <li>Copy connection details from your cluster overview</li>
+                  <li>Ensure your IP is whitelisted for access</li>
                 </ol>
               </div>
             </>
@@ -204,7 +255,13 @@ export const DataProviderSettings = () => {
               onClick={() => {
                 handleConnect().catch(console.error);
               }}
-              disabled={isConnecting || !config.url || !config.anonKey}
+              disabled={
+                isConnecting ||
+                !config.host ||
+                !config.database ||
+                !config.username ||
+                !config.password
+              }
             >
               {isConnecting ? 'Connecting...' : 'Test Connection'}
             </Button>

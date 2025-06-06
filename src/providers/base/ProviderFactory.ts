@@ -89,8 +89,8 @@ export class DataProviderFactoryImpl implements DataProviderFactory {
 
     // Type-specific validation
     switch (typedConfig.type) {
-      case 'supabase':
-        return this.validateSupabaseConfig(configObj);
+      case 'postgresql':
+        return this.validatePostgreSQLConfig(configObj);
       case 'clickhouse':
         return this.validateClickHouseConfig(configObj);
       default:
@@ -98,21 +98,29 @@ export class DataProviderFactoryImpl implements DataProviderFactory {
     }
   }
 
-  private validateSupabaseConfig(
+  private validatePostgreSQLConfig(
     config: Record<string, unknown>
   ): ValidationResult {
-    if (config['type'] !== 'supabase') {
+    if (config['type'] !== 'postgresql') {
       return { valid: false, errors: ['Invalid config type'] };
     }
 
     const errors: string[] = [];
 
-    if (!config['url']) {
-      errors.push('Supabase URL is required');
+    if (!config['host']) {
+      errors.push('PostgreSQL host is required');
     }
 
-    if (!config['anonKey']) {
-      errors.push('Supabase anonymous key is required');
+    if (!config['database']) {
+      errors.push('Database name is required');
+    }
+
+    if (!config['username']) {
+      errors.push('Username is required');
+    }
+
+    if (!config['password']) {
+      errors.push('Password is required');
     }
 
     if (!config['table']) {

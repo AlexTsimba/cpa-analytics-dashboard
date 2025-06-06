@@ -9,7 +9,6 @@ import type {
   AnalyticsConfig,
   AuthConfig,
   FeatureFlags,
-  GoogleSheetsConfig,
   RateLimitConfig,
 } from '@/types/env';
 
@@ -76,30 +75,6 @@ export function getNumericEnvVar(key: string, defaultValue = 0): number {
 // -----------------------------------------------------------------------------
 // CONFIGURATION BUILDERS
 // -----------------------------------------------------------------------------
-
-/**
- * Get Google Sheets configuration from environment variables
- * @param required - Whether to throw an error if config is incomplete
- */
-export function getGoogleSheetsConfig(
-  required = false
-): GoogleSheetsConfig | null {
-  try {
-    const config: GoogleSheetsConfig = {
-      apiKey: getEnvVar('GOOGLE_SHEETS_API_KEY'),
-      spreadsheetId: getEnvVar('GOOGLE_SHEETS_SPREADSHEET_ID'),
-      clientEmail: getEnvVar('GOOGLE_SHEETS_CLIENT_EMAIL'),
-      privateKey: getEnvVar('GOOGLE_SHEETS_PRIVATE_KEY'),
-    };
-
-    return config;
-  } catch (_error) {
-    if (required) {
-      throw _error;
-    }
-    return null;
-  }
-}
 
 /**
  * Get authentication configuration from environment variables
@@ -228,7 +203,6 @@ export function getAppConfig() {
   return {
     appUrl: getEnvVar('NEXT_PUBLIC_APP_URL'),
     environment: process.env.NODE_ENV,
-    googleSheets: getGoogleSheetsConfig(),
     auth: getAuthConfig(),
     analytics: getAnalyticsConfig(),
     features: getFeatureFlags(),

@@ -1,7 +1,7 @@
 /**
  * App Sidebar Component - Sidebar-07 Style
  *
- * Keitaro-inspired collapsible sidebar that reduces to icons
+ * TraffBoard-inspired collapsible sidebar that reduces to icons
  * Professional affiliate management navigation with modern shadcn/ui foundation
  */
 
@@ -39,8 +39,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { HydrationSafeBadge } from '@/components/hydration-safe-badge';
-import { useConnectionStatus, useLastUpdate } from '@/hooks/use-status';
 
 type NavItem = {
   title: string;
@@ -94,27 +92,6 @@ export const AppSidebar = ({
     return pathname.startsWith(href);
   };
 
-  // Dynamic status components
-  const StatusBadge = () => {
-    const isOnline = useConnectionStatus();
-    return (
-      <HydrationSafeBadge
-        variant={isOnline ? 'secondary' : 'destructive'}
-        className="text-xs px-2 py-1"
-        fallback="Online"
-      >
-        {isOnline ? 'Online' : 'Offline'}
-      </HydrationSafeBadge>
-    );
-  };
-
-  const LastUpdateTime = () => {
-    const lastUpdate = useLastUpdate();
-    return (
-      <span className="font-medium text-sidebar-foreground">{lastUpdate}</span>
-    );
-  };
-
   return (
     <Sidebar collapsible="icon" className="sidebar-shadow" {...props}>
       {/* Header */}
@@ -123,12 +100,12 @@ export const AppSidebar = ({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild className="nav-item-hover">
               <Link href="/" className="flex items-center gap-3">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground shrink-0">
                   <BarChart3 className="size-4" />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Keitaro</span>
-                  <span className="truncate text-xs opacity-80">
+                <div className="flex flex-col flex-1 text-left text-sm leading-tight min-w-0">
+                  <span className="truncate font-semibold">TraffBoard</span>
+                  <span className="truncate text-xs text-sidebar-foreground/70">
                     Affiliate Tracker
                   </span>
                 </div>
@@ -234,24 +211,6 @@ export const AppSidebar = ({
             </DropdownMenu>
           </SidebarMenuItem>
         </SidebarMenu>
-
-        {/* Status Information */}
-        <div className="px-3 py-2 text-xs text-sidebar-foreground/70 card-enhanced rounded-md mx-2">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-medium">Status</span>
-            <StatusBadge />
-          </div>
-          <div className="flex items-center justify-between py-1">
-            <span className="opacity-80">Data Sync</span>
-            <span className="font-medium text-sidebar-foreground">
-              Real-time
-            </span>
-          </div>
-          <div className="flex items-center justify-between py-1">
-            <span className="opacity-80">Last Update</span>
-            <LastUpdateTime />
-          </div>
-        </div>
       </SidebarFooter>
     </Sidebar>
   );

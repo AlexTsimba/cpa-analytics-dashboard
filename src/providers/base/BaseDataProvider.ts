@@ -141,7 +141,7 @@ export abstract class BaseDataProvider implements DataProvider {
   }
 
   /**
-   * Parse various string date formats commonly found in Google Sheets
+   * Parse various string date formats commonly found in data sources
    */
   private parseStringDate(dateString: string): Date | null {
     // ISO 8601 formats

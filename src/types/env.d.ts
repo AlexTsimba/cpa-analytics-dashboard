@@ -21,21 +21,6 @@ declare global {
       NEXT_PUBLIC_VERCEL_URL?: string;
 
       // -----------------------------------------------------------------------------
-      // GOOGLE SHEETS API
-      // -----------------------------------------------------------------------------
-      /** Google Sheets API key for accessing CPA data */
-      GOOGLE_SHEETS_API_KEY?: string;
-
-      /** Google Sheets spreadsheet ID containing CPA data */
-      GOOGLE_SHEETS_SPREADSHEET_ID?: string;
-
-      /** Google service account email */
-      GOOGLE_SHEETS_CLIENT_EMAIL?: string;
-
-      /** Google service account private key */
-      GOOGLE_SHEETS_PRIVATE_KEY?: string;
-
-      // -----------------------------------------------------------------------------
       // DATABASE
       // -----------------------------------------------------------------------------
       /** Database connection URL */
@@ -146,14 +131,6 @@ declare global {
 // -----------------------------------------------------------------------------
 // ENVIRONMENT CONFIGURATION INTERFACES
 // -----------------------------------------------------------------------------
-
-/** Configuration for Google Sheets integration */
-export type GoogleSheetsConfig = {
-  apiKey: string;
-  spreadsheetId: string;
-  clientEmail: string;
-  privateKey: string;
-};
 
 /** Configuration for authentication providers */
 export type AuthConfig = {

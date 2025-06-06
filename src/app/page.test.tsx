@@ -10,11 +10,11 @@ describe('Home Page', () => {
     expect(screen.getByRole('main')).toBeInTheDocument();
   });
 
-  it('displays the main heading', () => {
+  it('displays the main content sections', () => {
     render(<Home />);
-    const heading = screen.getByRole('heading', { level: 1 });
+    const heading = screen.getByRole('heading', { level: 2 });
     expect(heading).toBeInTheDocument();
-    expect(heading).toHaveTextContent('Affiliate Dashboard');
+    expect(heading).toHaveTextContent('Traffic Overview');
   });
 
   it('has proper semantic structure', () => {

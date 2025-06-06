@@ -1,6 +1,6 @@
 /**
  * Data Providers Index
- * Exports all provider-related functionality
+ * Exports all provider-related functionality for Digital Ocean PostgreSQL
  */
 
 // Base classes and utilities
@@ -13,13 +13,13 @@ export {
 } from './base/ProviderFactory';
 
 // Provider implementations
-// TODO: Add Supabase provider when implemented
+// TODO: Add DigitalOceanPostgreSQLProvider when implemented
 
 // Provider registration
-// TODO: Import and register providers when implemented
+// TODO: Import and register PostgreSQL provider when implemented
 
 // Auto-register available providers
-// TODO: Register Supabase provider when implemented
+// TODO: Register PostgreSQL provider when implemented
 
 // Re-export types
 export type * from '@/types/providers';

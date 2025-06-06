@@ -11,6 +11,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
+import { PageTitle } from '@/components/page-title';
 import { Separator } from '@/components/ui/separator';
 
 import './globals.css';
@@ -26,9 +27,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Keitaro Tracker | Affiliate Management Dashboard',
-  description:
-    'Professional affiliate tracking and campaign management platform with real-time analytics, partner management, and conversion optimization tools.',
+  title: 'TraffBoard | Affiliate Management Dashboard',
+  description: 'TraffBoard - Professional affiliate tracking platform',
 };
 
 const RootLayout = ({
@@ -56,12 +56,7 @@ const RootLayout = ({
                   <SidebarTrigger className="-ml-1" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <div>
-                    <h1 className="text-lg font-medium text-foreground">
-                      Affiliate Management Dashboard
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
-                      Professional tracking & campaign optimization
-                    </p>
+                    <PageTitle />
                   </div>
                 </div>
                 <div className="flex items-center gap-4 ml-auto px-4">

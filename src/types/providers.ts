@@ -10,7 +10,7 @@ import type {
 } from './analytics';
 
 // Supported data provider types
-export type DataProviderType = 'supabase' | 'clickhouse' | 'api' | 'csv';
+export type DataProviderType = 'postgresql' | 'clickhouse' | 'api' | 'csv';
 
 // Provider connection status
 export type ConnectionStatus =
@@ -28,14 +28,18 @@ export type BaseProviderConfig = {
   connectionStatus: ConnectionStatus;
 };
 
-// Supabase specific configuration
-export type SupabaseConfig = {
-  type: 'supabase';
-  url: string;
-  anonKey: string;
-  serviceRoleKey?: string;
+// Digital Ocean PostgreSQL specific configuration
+export type PostgreSQLConfig = {
+  type: 'postgresql';
+  host: string;
+  port: number;
+  database: string;
+  username: string;
+  password: string;
+  ssl?: boolean;
   schema?: string;
   table: string;
+  connectionString?: string;
 } & BaseProviderConfig;
 
 // ClickHouse specific configuration (future)
@@ -51,7 +55,7 @@ export type ClickHouseConfig = {
 } & BaseProviderConfig;
 
 // Union type for all provider configurations
-export type DataProviderConfig = SupabaseConfig | ClickHouseConfig;
+export type DataProviderConfig = PostgreSQLConfig | ClickHouseConfig;
 
 // Data transformation result
 export type TransformationResult = {

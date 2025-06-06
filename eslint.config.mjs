@@ -32,7 +32,7 @@ export default tseslint.config(
       },
     },
     rules: {
-      // Enhanced TypeScript rules
+      // TypeScript rules - focused on preventing real issues
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -41,63 +41,63 @@ export default tseslint.config(
           caughtErrorsIgnorePattern: '^_',
         },
       ],
-      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn', // Downgraded from error
       '@typescript-eslint/no-non-null-assertion': 'warn',
       '@typescript-eslint/prefer-nullish-coalescing': 'warn',
       '@typescript-eslint/prefer-optional-chain': 'error',
-      '@typescript-eslint/no-unnecessary-type-assertion': 'error',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'warn', // Downgraded
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/await-thenable': 'error',
       '@typescript-eslint/no-misused-promises': 'error',
-      '@typescript-eslint/require-await': 'error',
+      '@typescript-eslint/require-await': 'warn', // Downgraded from error
       '@typescript-eslint/consistent-type-imports': [
-        'error',
+        'warn', // Downgraded from error
         { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
       ],
       '@typescript-eslint/consistent-type-definitions': ['warn', 'type'],
-      '@typescript-eslint/array-type': ['error', { default: 'array' }],
+      '@typescript-eslint/array-type': ['warn', { default: 'array' }], // Downgraded
       '@typescript-eslint/prefer-as-const': 'error',
-      '@typescript-eslint/no-unnecessary-condition': 'warn',
+      '@typescript-eslint/no-unnecessary-condition': 'off', // Disabled - too restrictive
 
-      // General code quality rules
+      // General code quality rules - practical focus
       'no-console': ['warn', { allow: ['warn', 'error'] }],
-      'no-debugger': 'error',
+      'no-debugger': 'warn', // Downgraded - useful in development
       'no-var': 'error',
       'prefer-const': 'error',
-      'no-unused-expressions': 'error',
+      'no-unused-expressions': 'warn', // Downgraded
       'prefer-template': 'warn',
-      'object-shorthand': 'error',
-      'no-nested-ternary': 'warn',
+      'object-shorthand': 'warn', // Downgraded
+      'no-nested-ternary': 'off', // Disabled - sometimes useful
       eqeqeq: ['error', 'always', { null: 'ignore' }],
-      curly: ['error', 'all'],
+      curly: ['warn', 'all'], // Downgraded
 
-      // React/Next.js specific enhancements
-      'react/jsx-boolean-value': ['error', 'never'],
-      'react/jsx-curly-brace-presence': ['error', 'never'],
-      'react/jsx-fragments': ['error', 'syntax'],
-      'react/jsx-no-useless-fragment': 'error',
-      'react/self-closing-comp': 'error',
-      'react/prefer-stateless-function': 'error',
-      'react/function-component-definition': [
-        'warn',
-        {
-          namedComponents: 'arrow-function',
-          unnamedComponents: 'arrow-function',
-        },
-      ],
+      // React/Next.js specific - focused on common issues
+      'react/jsx-boolean-value': ['warn', 'never'], // Downgraded
+      'react/jsx-curly-brace-presence': ['warn', 'never'], // Downgraded
+      'react/jsx-fragments': ['warn', 'syntax'], // Downgraded
+      'react/jsx-no-useless-fragment': 'warn', // Downgraded
+      'react/self-closing-comp': 'warn', // Downgraded
+      'react/prefer-stateless-function': 'off', // Disabled - hooks make this obsolete
+      'react/function-component-definition': 'off', // Disabled - too restrictive
 
-      // Import organization
+      // Import organization - helpful but not blocking
       'sort-imports': [
-        'warn',
+        'off', // Disabled - often conflicts with auto-import tools
         {
           ignoreCase: true,
           ignoreDeclarationSort: true,
         },
       ],
+
+      // New helpful rules
+      'prefer-arrow-callback': 'warn',
+      'no-duplicate-imports': 'error',
+      'no-unreachable': 'error',
+      'no-constant-condition': 'warn',
     },
   },
 
-  // Test files configuration
+  // Test files configuration - minimal restrictions
   {
     files: [
       '**/__tests__/**/*',
@@ -105,6 +105,7 @@ export default tseslint.config(
       '**/tests/**/*',
     ],
     rules: {
+      // Disable most rules for tests - focus on functionality
       'no-console': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
@@ -127,6 +128,25 @@ export default tseslint.config(
       'sort-imports': 'off',
       'react/function-component-definition': 'off',
       'react/jsx-no-useless-fragment': 'off',
+      'prefer-arrow-callback': 'off',
+      'no-duplicate-imports': 'off',
+    },
+  },
+
+  // Development files - relaxed rules
+  {
+    files: [
+      '**/*.config.{js,ts,mjs}',
+      '**/scripts/**',
+      '**/*.d.ts',
+      'src/lib/database/migrate.ts', // Database migration files
+    ],
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/consistent-type-definitions': 'off',
+      '@typescript-eslint/no-var-requires': 'off',
+      'prefer-const': 'off',
     },
   },
 

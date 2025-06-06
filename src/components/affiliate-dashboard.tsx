@@ -1,7 +1,7 @@
 /**
  * Affiliate Management Dashboard Component
  *
- * Keitaro-inspired professional interface for affiliate managers
+ * TraffBoard-inspired professional interface for affiliate managers
  * Optimized for long work sessions with minimal visual noise
  */
 
@@ -116,24 +116,14 @@ export const AffiliateDashboard = () => {
 
   return (
     <main className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-medium text-foreground tracking-tight">
-            Affiliate Dashboard
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Campaign performance and partner management
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" className="text-xs">
-            Export Data
-          </Button>
-          <Button size="sm" className="text-xs">
-            New Campaign
-          </Button>
-        </div>
+      {/* Action Buttons */}
+      <div className="flex items-center justify-end gap-2">
+        <Button size="sm" variant="outline" className="text-xs">
+          Export Data
+        </Button>
+        <Button size="sm" className="text-xs">
+          New Campaign
+        </Button>
       </div>
 
       {/* Key Metrics - Compact Professional Layout */}
