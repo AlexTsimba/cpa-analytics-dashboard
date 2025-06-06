@@ -37,7 +37,7 @@ const nextConfig: NextConfig = {
   },
 
   // External packages that should not be bundled by webpack
-  serverExternalPackages: ['googleapis'],
+  serverExternalPackages: [],
 
   // Image optimization
   images: {
