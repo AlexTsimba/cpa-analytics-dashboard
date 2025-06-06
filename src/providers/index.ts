@@ -13,14 +13,13 @@ export {
 } from './base/ProviderFactory';
 
 // Provider implementations
-export { GoogleSheetsDataProvider } from './google-sheets/GoogleSheetsProvider';
+// TODO: Add Supabase provider when implemented
 
 // Provider registration
-import { GoogleSheetsDataProvider } from './google-sheets/GoogleSheetsProvider';
-import { providerRegistry } from './base/ProviderFactory';
+// TODO: Import and register providers when implemented
 
 // Auto-register available providers
-providerRegistry.register('google-sheets', GoogleSheetsDataProvider);
+// TODO: Register Supabase provider when implemented
 
 // Re-export types
 export type * from '@/types/providers';

@@ -62,7 +62,6 @@
     "report:completion": "npm run report:tasks"
   },
   "dependencies": {
-    "@googleapis/sheets": "^9.8.0",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-collapsible": "^1.1.11",
@@ -76,8 +75,6 @@
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "google-auth-library": "^9.15.1",
-    "googleapis": "^149.0.0",
     "lucide-react": "^0.511.0",
     "msw": "^2.9.0",
     "next": "15.3.3",

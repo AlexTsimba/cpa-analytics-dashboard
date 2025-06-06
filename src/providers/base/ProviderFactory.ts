@@ -89,8 +89,8 @@ export class DataProviderFactoryImpl implements DataProviderFactory {
 
     // Type-specific validation
     switch (typedConfig.type) {
-      case 'google-sheets':
-        return this.validateGoogleSheetsConfig(configObj);
+      case 'supabase':
+        return this.validateSupabaseConfig(configObj);
       case 'clickhouse':
         return this.validateClickHouseConfig(configObj);
       default:
@@ -98,25 +98,25 @@ export class DataProviderFactoryImpl implements DataProviderFactory {
     }
   }
 
-  private validateGoogleSheetsConfig(
+  private validateSupabaseConfig(
     config: Record<string, unknown>
   ): ValidationResult {
-    if (config['type'] !== 'google-sheets') {
+    if (config['type'] !== 'supabase') {
       return { valid: false, errors: ['Invalid config type'] };
     }
 
     const errors: string[] = [];
 
-    if (!config['spreadsheetId']) {
-      errors.push('Spreadsheet ID is required');
+    if (!config['url']) {
+      errors.push('Supabase URL is required');
     }
 
-    if (!config['authType']) {
-      errors.push('Authentication type is required');
+    if (!config['anonKey']) {
+      errors.push('Supabase anonymous key is required');
     }
 
-    if (config['authType'] === 'service-account' && !config['credentials']) {
-      errors.push('Service account credentials are required');
+    if (!config['table']) {
+      errors.push('Table name is required');
     }
 
     if (errors.length > 0) {

@@ -8,19 +8,19 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import type { DataProviderConfig, GoogleSheetsConfig } from '@/types/providers';
+import type { DataProviderConfig, SupabaseConfig } from '@/types/providers';
 import { analyticsService } from '@/services/AnalyticsService';
 
 export const DataProviderSettings = () => {
-  const [selectedType, setSelectedType] = useState<string>('google-sheets');
-  const [config, setConfig] = useState<Partial<GoogleSheetsConfig>>({
-    name: 'My Google Sheets',
-    type: 'google-sheets',
+  const [selectedType, setSelectedType] = useState<string>('supabase');
+  const [config, setConfig] = useState<Partial<SupabaseConfig>>({
+    name: 'My Supabase Database',
+    type: 'supabase',
     enabled: true,
     connectionStatus: 'disconnected',
-    authType: 'service-account',
-    spreadsheetId: '',
-    sheetName: 'Sheet1',
+    url: '',
+    anonKey: '',
+    table: 'analytics_records',
   });
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionResult, setConnectionResult] = useState<string>('');
@@ -28,8 +28,8 @@ export const DataProviderSettings = () => {
   const availableProviders = analyticsService.getAvailableProviders();
 
   const handleConnect = async () => {
-    if (!config.spreadsheetId) {
-      setConnectionResult('Please enter a Spreadsheet ID');
+    if (!config.url || !config.anonKey) {
+      setConnectionResult('Please enter Supabase URL and anonymous key');
       return;
     }
 
@@ -84,7 +84,7 @@ export const DataProviderSettings = () => {
             >
               {availableProviders.map((type) => {
                 let displayName = type;
-                if (type === 'google-sheets') displayName = 'Google Sheets';
+                if (type === 'supabase') displayName = 'Supabase';
                 else if (type === 'clickhouse') displayName = 'ClickHouse';
 
                 return (
@@ -96,7 +96,7 @@ export const DataProviderSettings = () => {
             </select>
           </div>
 
-          {selectedType === 'google-sheets' && (
+          {selectedType === 'supabase' && (
             <>
               <div>
                 <label className="block text-sm font-medium mb-2">
@@ -107,98 +107,95 @@ export const DataProviderSettings = () => {
                   value={config.name ?? ''}
                   onChange={(e) => handleInputChange('name', e.target.value)}
                   className="w-full p-2 border rounded-md"
-                  placeholder="My Google Sheets"
+                  placeholder="My Supabase Database"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Spreadsheet ID *
+                  Supabase URL *
                 </label>
                 <input
                   type="text"
-                  value={config.spreadsheetId ?? ''}
-                  onChange={(e) =>
-                    handleInputChange('spreadsheetId', e.target.value)
-                  }
+                  value={config.url ?? ''}
+                  onChange={(e) => handleInputChange('url', e.target.value)}
                   className="w-full p-2 border rounded-md"
-                  placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms"
+                  placeholder="https://your-project.supabase.co"
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Find this in your Google Sheets URL
+                  Find this in your Supabase project settings
                 </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Sheet Name
+                  Anonymous Key *
                 </label>
                 <input
-                  type="text"
-                  value={config.sheetName ?? ''}
-                  onChange={(e) =>
-                    handleInputChange('sheetName', e.target.value)
-                  }
+                  type="password"
+                  value={config.anonKey ?? ''}
+                  onChange={(e) => handleInputChange('anonKey', e.target.value)}
                   className="w-full p-2 border rounded-md"
-                  placeholder="Sheet1"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Range (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={config.range ?? ''}
-                  onChange={(e) => handleInputChange('range', e.target.value)}
-                  className="w-full p-2 border rounded-md"
-                  placeholder="A1:Z1000"
+                  placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Leave empty to read all data
+                  Your Supabase project&apos;s anonymous/public key
                 </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-2">
-                  Authentication
+                  Table Name
                 </label>
-                <select
-                  value={config.authType ?? 'service-account'}
-                  onChange={(e) =>
-                    handleInputChange('authType', e.target.value)
-                  }
+                <input
+                  type="text"
+                  value={config.table ?? ''}
+                  onChange={(e) => handleInputChange('table', e.target.value)}
                   className="w-full p-2 border rounded-md"
-                >
-                  <option value="service-account">Service Account</option>
-                  <option value="oauth2" disabled>
-                    OAuth2 (Coming Soon)
-                  </option>
-                </select>
+                  placeholder="analytics_records"
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Name of the table containing your analytics data
+                </p>
               </div>
 
-              {config.authType === 'service-account' && (
-                <div className="bg-blue-50 p-4 rounded-md">
-                  <h4 className="font-medium text-blue-900 mb-2">
-                    Service Account Setup
-                  </h4>
-                  <p className="text-sm text-blue-800 mb-2">
-                    To use service account authentication:
-                  </p>
-                  <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                    <li>Create a service account in Google Cloud Console</li>
-                    <li>Download the JSON key file</li>
-                    <li>
-                      Set the GOOGLE_APPLICATION_CREDENTIALS environment
-                      variable
-                    </li>
-                    <li>
-                      Share your spreadsheet with the service account email
-                    </li>
-                  </ol>
-                </div>
-              )}
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Service Role Key (Optional)
+                </label>
+                <input
+                  type="password"
+                  value={config.serviceRoleKey ?? ''}
+                  onChange={(e) =>
+                    handleInputChange('serviceRoleKey', e.target.value)
+                  }
+                  className="w-full p-2 border rounded-md"
+                  placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Only needed for administrative operations
+                </p>
+              </div>
+
+              <div className="bg-blue-50 p-4 rounded-md">
+                <h4 className="font-medium text-blue-900 mb-2">
+                  Supabase Setup
+                </h4>
+                <p className="text-sm text-blue-800 mb-2">
+                  To connect to your Supabase database:
+                </p>
+                <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                  <li>Create a Supabase project at supabase.com</li>
+                  <li>Set up your database schema for analytics data</li>
+                  <li>
+                    Copy your project URL and anonymous key from project
+                    settings
+                  </li>
+                  <li>
+                    Configure Row Level Security (RLS) for data protection
+                  </li>
+                </ol>
+              </div>
             </>
           )}
 
@@ -207,7 +204,7 @@ export const DataProviderSettings = () => {
               onClick={() => {
                 handleConnect().catch(console.error);
               }}
-              disabled={isConnecting || !config.spreadsheetId}
+              disabled={isConnecting || !config.url || !config.anonKey}
             >
               {isConnecting ? 'Connecting...' : 'Test Connection'}
             </Button>

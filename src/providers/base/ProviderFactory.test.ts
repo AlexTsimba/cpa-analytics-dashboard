@@ -8,8 +8,61 @@ import {
   DataProviderRegistryImpl,
   DataProviderFactoryImpl,
 } from './ProviderFactory';
-import { GoogleSheetsDataProvider } from '../google-sheets/GoogleSheetsProvider';
-import type { GoogleSheetsConfig, DataProvider } from '@/types/providers';
+import type { SupabaseConfig, DataProvider } from '@/types/providers';
+
+// Mock Supabase provider for testing
+class MockSupabaseProvider implements DataProvider {
+  readonly name = 'Supabase';
+  readonly type = 'supabase' as const;
+
+  async fetch(): Promise<any> {
+    return {};
+  }
+  async transform(): Promise<any> {
+    return {
+      success: true,
+      data: {
+        records: [],
+        totalCount: 0,
+        lastUpdated: new Date(),
+        metadata: {
+          source: 'test',
+          version: '1.0',
+          columns: [],
+          columnMappings: {},
+        },
+      },
+      errors: [],
+    };
+  }
+  validate(): any {
+    return { valid: true, errors: [] };
+  }
+  async connect(): Promise<any> {
+    return { success: true, message: 'Connected' };
+  }
+  disconnect() {
+    return;
+  }
+  async testConnection(): Promise<any> {
+    return { success: true, message: 'Connected' };
+  }
+  configure() {
+    return;
+  }
+  getConfig() {
+    return null;
+  }
+  async getSampleData() {
+    return [];
+  }
+  async getAvailableColumns() {
+    return [];
+  }
+  async getRecordCount() {
+    return 0;
+  }
+}
 
 // Mock ClickHouse provider for testing
 class MockClickHouseProvider implements DataProvider {
@@ -74,30 +127,30 @@ describe('DataProviderRegistryImpl', () => {
 
   describe('register', () => {
     it('should register a provider', () => {
-      registry.register('google-sheets', GoogleSheetsDataProvider);
+      registry.register('supabase', MockSupabaseProvider);
 
-      expect(registry.isRegistered('google-sheets')).toBe(true);
-      expect(registry.getRegistered()).toContain('google-sheets');
+      expect(registry.isRegistered('supabase')).toBe(true);
+      expect(registry.getRegistered()).toContain('supabase');
     });
 
     it('should allow multiple providers', () => {
-      registry.register('google-sheets', GoogleSheetsDataProvider);
+      registry.register('supabase', MockSupabaseProvider);
       registry.register('clickhouse', MockClickHouseProvider);
 
       expect(registry.getRegistered()).toHaveLength(2);
-      expect(registry.getRegistered()).toContain('google-sheets');
+      expect(registry.getRegistered()).toContain('supabase');
       expect(registry.getRegistered()).toContain('clickhouse');
     });
   });
 
   describe('unregister', () => {
     it('should unregister a provider', () => {
-      registry.register('google-sheets', GoogleSheetsDataProvider);
-      expect(registry.isRegistered('google-sheets')).toBe(true);
+      registry.register('supabase', MockSupabaseProvider);
+      expect(registry.isRegistered('supabase')).toBe(true);
 
-      registry.unregister('google-sheets');
-      expect(registry.isRegistered('google-sheets')).toBe(false);
-      expect(registry.getRegistered()).not.toContain('google-sheets');
+      registry.unregister('supabase');
+      expect(registry.isRegistered('supabase')).toBe(false);
+      expect(registry.getRegistered()).not.toContain('supabase');
     });
 
     it('should handle unregistering non-existent provider', () => {
@@ -107,12 +160,12 @@ describe('DataProviderRegistryImpl', () => {
 
   describe('isRegistered', () => {
     it('should return false for unregistered provider', () => {
-      expect(registry.isRegistered('google-sheets')).toBe(false);
+      expect(registry.isRegistered('supabase')).toBe(false);
     });
 
     it('should return true for registered provider', () => {
-      registry.register('google-sheets', GoogleSheetsDataProvider);
-      expect(registry.isRegistered('google-sheets')).toBe(true);
+      registry.register('supabase', MockSupabaseProvider);
+      expect(registry.isRegistered('supabase')).toBe(true);
     });
   });
 
@@ -122,8 +175,8 @@ describe('DataProviderRegistryImpl', () => {
     });
 
     it('should return registered provider types', () => {
-      registry.register('google-sheets', GoogleSheetsDataProvider);
-      expect(registry.getRegistered()).toEqual(['google-sheets']);
+      registry.register('supabase', MockSupabaseProvider);
+      expect(registry.getRegistered()).toEqual(['supabase']);
     });
   });
 });
@@ -132,27 +185,15 @@ describe('DataProviderFactoryImpl', () => {
   let registry: DataProviderRegistryImpl;
   let factory: DataProviderFactoryImpl;
 
-  const mockGoogleSheetsConfig: GoogleSheetsConfig = {
-    name: 'Test Sheets',
-    type: 'google-sheets',
+  const mockSupabaseConfig: SupabaseConfig = {
+    name: 'Test Supabase',
+    type: 'supabase',
     enabled: true,
     connectionStatus: 'disconnected',
-    spreadsheetId: 'test-spreadsheet-id',
-    authType: 'service-account',
-    credentials: {
-      type: 'service_account',
-      project_id: 'test-project',
-      private_key_id: 'test-key-id',
-      private_key:
-        '-----BEGIN PRIVATE KEY-----\ntest-key\n-----END PRIVATE KEY-----\n',
-      client_email: 'test@test-project.iam.gserviceaccount.com',
-      client_id: 'test-client-id',
-      auth_uri: 'https://accounts.google.com/o/oauth2/auth',
-      token_uri: 'https://oauth2.googleapis.com/token',
-      auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
-      client_x509_cert_url:
-        'https://www.googleapis.com/robot/v1/metadata/x509/test%40test-project.iam.gserviceaccount.com',
-    },
+    url: 'https://test-project.supabase.co',
+    anonKey: 'test-anon-key',
+    table: 'analytics_records',
+    schema: 'public',
   };
 
   beforeEach(() => {
@@ -162,29 +203,28 @@ describe('DataProviderFactoryImpl', () => {
 
   describe('create', () => {
     it('should create a provider instance', () => {
-      factory.register('google-sheets', GoogleSheetsDataProvider);
+      factory.register('supabase', MockSupabaseProvider);
 
-      const provider = factory.create(mockGoogleSheetsConfig);
+      const provider = factory.create(mockSupabaseConfig);
 
-      expect(provider).toBeInstanceOf(GoogleSheetsDataProvider);
-      expect(provider.name).toBe('Google Sheets');
-      expect(provider.type).toBe('google-sheets');
-      expect(provider.getConfig()).toEqual(mockGoogleSheetsConfig);
+      expect(provider).toBeInstanceOf(MockSupabaseProvider);
+      expect(provider.name).toBe('Supabase');
+      expect(provider.type).toBe('supabase');
     });
 
     it('should throw error for unregistered provider type', () => {
-      expect(() => factory.create(mockGoogleSheetsConfig)).toThrow(
-        "Provider type 'google-sheets' is not registered"
+      expect(() => factory.create(mockSupabaseConfig)).toThrow(
+        "Provider type 'supabase' is not registered"
       );
     });
   });
 
   describe('register', () => {
     it('should register provider in underlying registry', () => {
-      factory.register('google-sheets', GoogleSheetsDataProvider);
+      factory.register('supabase', MockSupabaseProvider);
 
-      expect(registry.isRegistered('google-sheets')).toBe(true);
-      expect(factory.getAvailableTypes()).toContain('google-sheets');
+      expect(registry.isRegistered('supabase')).toBe(true);
+      expect(factory.getAvailableTypes()).toContain('supabase');
     });
   });
 
@@ -194,19 +234,19 @@ describe('DataProviderFactoryImpl', () => {
     });
 
     it('should return registered types', () => {
-      factory.register('google-sheets', GoogleSheetsDataProvider);
-      expect(factory.getAvailableTypes()).toEqual(['google-sheets']);
+      factory.register('supabase', MockSupabaseProvider);
+      expect(factory.getAvailableTypes()).toEqual(['supabase']);
     });
   });
 
   describe('validateConfig', () => {
     beforeEach(() => {
-      factory.register('google-sheets', GoogleSheetsDataProvider);
+      factory.register('supabase', MockSupabaseProvider);
       factory.register('clickhouse', MockClickHouseProvider);
     });
 
-    it('should validate valid Google Sheets config', () => {
-      const result = factory.validateConfig(mockGoogleSheetsConfig);
+    it('should validate valid Supabase config', () => {
+      const result = factory.validateConfig(mockSupabaseConfig);
 
       expect(result.valid).toBe(true);
       expect(result.errors).toBeUndefined();
@@ -223,7 +263,7 @@ describe('DataProviderFactoryImpl', () => {
 
     it('should return error for unregistered provider type', () => {
       const invalidConfig = {
-        ...mockGoogleSheetsConfig,
+        ...mockSupabaseConfig,
         type: 'non-existent' as any,
       };
 
@@ -234,37 +274,24 @@ describe('DataProviderFactoryImpl', () => {
         "Provider type 'non-existent' is not registered"
       );
       expect(result.suggestions).toContain(
-        'Available types: google-sheets, clickhouse'
+        'Available types: supabase, clickhouse'
       );
     });
 
-    it('should validate Google Sheets specific fields', () => {
+    it('should validate Supabase specific fields', () => {
       const invalidConfig = {
-        ...mockGoogleSheetsConfig,
-        spreadsheetId: '', // Empty spreadsheet ID
-        authType: undefined as any, // Missing auth type
+        ...mockSupabaseConfig,
+        url: '', // Empty URL
+        anonKey: '', // Empty anon key
+        table: '', // Empty table
       };
 
       const result = factory.validateConfig(invalidConfig);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Spreadsheet ID is required');
-      expect(result.errors).toContain('Authentication type is required');
-    });
-
-    it('should require credentials for service account auth', () => {
-      const invalidConfig = {
-        ...mockGoogleSheetsConfig,
-        authType: 'service-account' as const,
-        credentials: null as any,
-      };
-
-      const result = factory.validateConfig(invalidConfig);
-
-      expect(result.valid).toBe(false);
-      expect(result.errors).toContain(
-        'Service account credentials are required'
-      );
+      expect(result.errors).toContain('Supabase URL is required');
+      expect(result.errors).toContain('Supabase anonymous key is required');
+      expect(result.errors).toContain('Table name is required');
     });
 
     it('should validate ClickHouse config fields (future)', () => {

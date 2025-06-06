@@ -10,7 +10,7 @@ import type {
 } from './analytics';
 
 // Supported data provider types
-export type DataProviderType = 'google-sheets' | 'clickhouse' | 'api' | 'csv';
+export type DataProviderType = 'supabase' | 'clickhouse' | 'api' | 'csv';
 
 // Provider connection status
 export type ConnectionStatus =
@@ -28,26 +28,14 @@ export type BaseProviderConfig = {
   connectionStatus: ConnectionStatus;
 };
 
-// Google Sheets specific configuration
-export type GoogleSheetsConfig = {
-  type: 'google-sheets';
-  spreadsheetId: string;
-  sheetName?: string;
-  range?: string;
-  authType: 'service-account' | 'oauth2';
-  credentials?: {
-    type: 'service_account';
-    project_id: string;
-    private_key_id: string;
-    private_key: string;
-    client_email: string;
-    client_id: string;
-    auth_uri: string;
-    token_uri: string;
-    auth_provider_x509_cert_url: string;
-    client_x509_cert_url: string;
-  };
-  refreshInterval?: number; // minutes
+// Supabase specific configuration
+export type SupabaseConfig = {
+  type: 'supabase';
+  url: string;
+  anonKey: string;
+  serviceRoleKey?: string;
+  schema?: string;
+  table: string;
 } & BaseProviderConfig;
 
 // ClickHouse specific configuration (future)
@@ -63,7 +51,7 @@ export type ClickHouseConfig = {
 } & BaseProviderConfig;
 
 // Union type for all provider configurations
-export type DataProviderConfig = GoogleSheetsConfig | ClickHouseConfig;
+export type DataProviderConfig = SupabaseConfig | ClickHouseConfig;
 
 // Data transformation result
 export type TransformationResult = {
