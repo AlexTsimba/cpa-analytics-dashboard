@@ -1,8 +1,8 @@
 /**
- * App Sidebar Component - Fresh Sidebar-07 Implementation
+ * App Sidebar Component - Sidebar-07 Style
  *
- * TraffBoard affiliate management navigation with clean shadcn/ui foundation
- * Reinstalled with latest sidebar component patterns
+ * TraffBoard-inspired collapsible sidebar that reduces to icons
+ * Professional affiliate management navigation with modern shadcn/ui foundation
  */
 
 'use client';
@@ -47,7 +47,7 @@ type NavItem = {
   badge?: string;
 };
 
-// Navigation items for TraffBoard affiliate management
+// Static navigation items - prevents hydration mismatches
 const NAVIGATION_ITEMS: NavItem[] = [
   {
     title: 'Overview',
@@ -117,61 +117,56 @@ export const AppSidebar = ({
 
       {/* Main Navigation */}
       <SidebarContent>
-        <nav role="navigation" aria-label="Main navigation">
-          <SidebarGroup>
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {NAVIGATION_ITEMS.map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive(item.href)}
-                      tooltip={item.title}
-                      className="nav-item-hover"
-                    >
-                      <Link href={item.href} className="flex items-center">
-                        <item.icon className="size-4" />
-                        <span>{item.title}</span>
-                        {item.badge && (
-                          <Badge
-                            variant="secondary"
-                            className="ml-auto text-xs"
-                          >
-                            {item.badge}
-                          </Badge>
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Platform</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {NAVIGATION_ITEMS.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.href)}
+                    tooltip={item.title}
+                    className="nav-item-hover"
+                  >
+                    <Link href={item.href} className="flex items-center">
+                      <item.icon className="size-4" />
+                      <span>{item.title}</span>
+                      {item.badge && (
+                        <Badge variant="secondary" className="ml-auto text-xs">
+                          {item.badge}
+                        </Badge>
+                      )}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-          {/* Settings Section */}
-          <SidebarGroup className="mt-auto">
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {BOTTOM_NAV_ITEMS.map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive(item.href)}
-                      tooltip={item.title}
-                      className="nav-item-hover"
-                    >
-                      <Link href={item.href} className="flex items-center">
-                        <item.icon className="size-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </nav>
+        {/* Settings Section */}
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {BOTTOM_NAV_ITEMS.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.href)}
+                    tooltip={item.title}
+                    className="nav-item-hover"
+                  >
+                    <Link href={item.href} className="flex items-center">
+                      <item.icon className="size-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
       {/* Footer */}
