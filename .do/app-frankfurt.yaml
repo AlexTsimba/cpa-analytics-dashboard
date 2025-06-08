@@ -1,0 +1,75 @@
+# Digital Ocean App Platform Configuration - FRANKFURT
+# CPA Analytics Dashboard
+
+name: cpa-analytics-dashboard
+region: fra  # Frankfurt region
+domains:
+  - name: cpa-dashboard.example.com
+    type: PRIMARY
+
+services:
+  # Next.js Frontend Application
+  - name: frontend
+    source_dir: /
+    github:
+      repo: your-username/cpa-analytics-dashboard
+      branch: main
+      deploy_on_push: true
+    build_command: npm ci && npm run build
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        value: ${api.PUBLIC_URL}
+      - key: DATABASE_URL
+        value: ${db.DATABASE_URL}
+        type: SECRET
+
+  # Node.js API Service  
+  - name: api
+    source_dir: /api
+    github:
+      repo: your-username/cpa-analytics-dashboard
+      branch: main
+      deploy_on_push: true
+    build_command: npm ci
+    run_command: npm start
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 3000
+    routes:
+      - path: /api
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: ${db.DATABASE_URL}
+        type: SECRET
+      - key: DATABASE_SSL
+        value: "true"
+      - key: PORT
+        value: "3000"
+
+databases:
+  # Reference to Frankfurt PostgreSQL cluster
+  - name: db
+    engine: PG
+    version: "15"
+    size: db-s-1vcpu-1gb
+    num_nodes: 1
+    production: true
+    # Uses existing Frankfurt database: e0c0a281-6a99-482f-a5be-37af0388da2a
+
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
+
+functions: []
+workers: []
+jobs: []
