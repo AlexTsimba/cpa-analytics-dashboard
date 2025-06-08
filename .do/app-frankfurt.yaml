@@ -2,7 +2,7 @@
 # CPA Analytics Dashboard
 
 name: cpa-analytics-dashboard
-region: fra  # Frankfurt region
+region: fra # Frankfurt region
 domains:
   - name: cpa-dashboard.example.com
     type: PRIMARY
@@ -30,7 +30,7 @@ services:
         value: ${db.DATABASE_URL}
         type: SECRET
 
-  # Node.js API Service  
+  # Node.js API Service
   - name: api
     source_dir: /api
     github:
@@ -52,15 +52,15 @@ services:
         value: ${db.DATABASE_URL}
         type: SECRET
       - key: DATABASE_SSL
-        value: "true"
+        value: 'true'
       - key: PORT
-        value: "3000"
+        value: '3000'
 
 databases:
   # Reference to Frankfurt PostgreSQL cluster
   - name: db
     engine: PG
-    version: "15"
+    version: '15'
     size: db-s-1vcpu-1gb
     num_nodes: 1
     production: true

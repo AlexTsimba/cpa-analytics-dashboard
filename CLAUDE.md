@@ -22,22 +22,27 @@ You are an advanced Software Engineering Assistant optimized for Claude 4 capabi
 ## Infrastructure-First Development Stack
 
 ### Core Infrastructure MCPs
+
 1. **PostgreSQL MCP** (`@crystaldba/postgres-mcp`): Direct database operations, schema management, and query optimization
-2. **Docker MCP** (`@quantgeekdev/docker-mcp`): Container management, image building, and compose orchestration  
+2. **Docker MCP** (`@quantgeekdev/docker-mcp`): Container management, image building, and compose orchestration
 3. **Digital Ocean MCP** (`@digitalocean/digitalocean-mcp`): Cloud infrastructure provisioning, droplet management, and deployment
 4. **TaskMaster MCP**: Intelligent project management and task breakdown for infrastructure projects
 
 ### Data Pipeline Architecture
+
 **Flow**: Google Sheets → Data Processor → PostgreSQL → Node.js API → Next.js Dashboard
+
 - **Data Ingestion**: Automated sheet-to-database synchronization
 - **Processing**: ETL operations with real-time validation
 - **API Layer**: RESTful endpoints with connection pooling
 - **Frontend**: Server-side rendered analytics dashboard
 
 ### Environment Configuration
+
 Before starting any infrastructure work:
+
 1. **PostgreSQL**: Set `POSTGRES_CONNECTION_STRING` in environment
-2. **Digital Ocean**: Configure `DIGITALOCEAN_API_TOKEN` 
+2. **Digital Ocean**: Configure `DIGITALOCEAN_API_TOKEN`
 3. **Docker**: Ensure Docker daemon is running for containerization tasks
 
 ## Key Optimization Rules
@@ -100,6 +105,7 @@ Phase X: [2-3 words] ✅ [key outcome]
 Tools at your disposal:
 
 **Core Development:**
+
 - TaskMaster: Task management and breakdown
 - Context7: Current tech documentation (for parallel research)
 - Memory: Context refresh and insights storage
@@ -109,12 +115,14 @@ Tools at your disposal:
 - GitHub Actions: CI/CD validation
 
 **Infrastructure & Data Pipeline:**
+
 - PostgreSQL MCP: Database operations, schema management, query optimization
 - Docker MCP: Container management, image building, compose orchestration
 - Digital Ocean MCP: Cloud infrastructure provisioning and deployment
 - Browser MCP: Web automation for testing and validation
 
 **Integration Workflow:**
+
 1. **Research Phase**: Context7 → Infrastructure documentation
 2. **Planning Phase**: TaskMaster → Infrastructure task breakdown
 3. **Development Phase**: PostgreSQL + Docker + Code development
@@ -182,25 +190,28 @@ Tools at your disposal:
 ## Infrastructure Validation Requirements
 
 ### Database Operations (PostgreSQL MCP)
+
 After every database change, perform these mandatory checks:
 
 1. **Schema Validation**: Verify table structures and indexes
-2. **Connection Health**: Test connection pooling and query performance  
+2. **Connection Health**: Test connection pooling and query performance
 3. **Data Integrity**: Validate constraints and relationships
 4. **Performance**: Monitor query execution times and optimize if needed
 
 Use these validation commands:
+
 ```bash
 # Database connectivity
 npm run db:test
 npm run db:migrate:status
 
-# Performance monitoring  
+# Performance monitoring
 npm run db:explain-queries
 npm run db:connection-pool-status
 ```
 
 ### Docker Container Validation
+
 After every container change:
 
 1. **Build Success**: Verify all images build without errors
@@ -221,6 +232,7 @@ docker system df
 ```
 
 ### Digital Ocean Deployment Validation
+
 After every deployment:
 
 1. **Infrastructure Health**: Verify droplet, database, and load balancer status
@@ -228,13 +240,13 @@ After every deployment:
 3. **DNS Resolution**: Test domain configuration and routing
 4. **Monitoring**: Confirm alerts and logging are functional
 
-```bash
+````bash
 # Deployment validation
 ### Git & CI/CD Validation
 After every push, perform these mandatory checks:
 
 1. Verify push success (no conflicts/errors)
-2. Check GitHub Actions workflow status  
+2. Check GitHub Actions workflow status
 3. Monitor for build failures or test issues
 4. If failures are detected, stop and fix immediately
 5. Proceed only when all checks pass
@@ -244,23 +256,25 @@ git status
 git log -1 --oneline
 gh run list --limit 1
 gh run view [run-id] (if needed)
-```
+````
 
 ## Environment Configuration
 
 ### Required Environment Variables
 
 **PostgreSQL Configuration:**
+
 ```bash
 POSTGRES_CONNECTION_STRING=postgresql://username:password@localhost:5432/database_name
 POSTGRES_HOST=localhost
-POSTGRES_PORT=5432  
+POSTGRES_PORT=5432
 POSTGRES_USER=your_username
 POSTGRES_PASSWORD=your_password
 POSTGRES_DB=your_database_name
 ```
 
 **Digital Ocean Configuration:**
+
 ```bash
 DIGITALOCEAN_API_TOKEN=your_do_token_here
 DO_SPACES_KEY=your_spaces_key
@@ -269,6 +283,7 @@ DO_REGION=nyc3
 ```
 
 **Application Configuration:**
+
 ```bash
 NODE_ENV=production
 NEXT_PUBLIC_API_URL=https://your-api-domain.com
@@ -280,6 +295,7 @@ REDIS_URL=redis://localhost:6379
 ### Setup Instructions
 
 1. **Copy environment template:**
+
    ```bash
    cp .env.example .env.local
    cp .env.example .env.production
@@ -294,7 +310,7 @@ REDIS_URL=redis://localhost:6379
 4. **Test configuration:**
    ```bash
    npm run test:env
-   npm run test:db-connection  
+   npm run test:db-connection
    npm run test:docker-compose
    ```
 

@@ -1,5 +1,5 @@
 // Minimal validation functions
-export function validateData(data: any): boolean {
+export function validateData(data: unknown): boolean {
   return data !== null && data !== undefined;
 }
 
@@ -8,7 +8,7 @@ export function normalizeCSVHeaders(headers: string[]): string[] {
 }
 
 export function transformRowData(
-  row: Record<string, any>
-): Record<string, any> {
+  row: Record<string, unknown>
+): Record<string, unknown> {
   return row;
 }

@@ -1,15 +1,19 @@
 # CPA Analytics Dashboard - Digital Ocean Infrastructure Configuration
 
 ## Infrastructure Overview
+
 This document outlines the Digital Ocean infrastructure setup for the CPA Analytics Dashboard migration.
 
 ### Architecture Components
+
 1. **App Platform Applications** (Primary deployment method)
+
    - Next.js Frontend Service
    - Node.js API Service
    - Managed PostgreSQL Database (Task 32 - COMPLETED)
 
 2. **Security & Networking**
+
    - SSL/TLS termination (automatic via App Platform)
    - Custom domain configuration
    - Environment variable management
@@ -22,6 +26,7 @@ This document outlines the Digital Ocean infrastructure setup for the CPA Analyt
 ## App Platform Configuration
 
 ### Frontend Service (Next.js)
+
 ```yaml
 name: cpa-dashboard-frontend
 type: STATIC_SITE
@@ -34,6 +39,7 @@ instance_size_slug: basic-xxs
 ```
 
 ### API Service (Node.js)
+
 ```yaml
 name: cpa-dashboard-api
 type: SERVICE
@@ -46,6 +52,7 @@ http_port: 3000
 ```
 
 ### Environment Variables
+
 ```bash
 # Database Configuration
 DATABASE_URL=postgresql://[username]:[password]@[host]:[port]/[database]
@@ -63,13 +70,15 @@ ENABLE_METRICS=true
 ```
 
 ## Cost Optimization
+
 - **Frontend (Static Site)**: $5/month
-- **API Service**: $5/month  
+- **API Service**: $5/month
 - **PostgreSQL Database**: $15/month
 - **Total**: $25/month
 - **Free Period**: 8+ months with $200 credit
 
 ## Security Features
+
 - Automatic SSL/TLS certificates
 - Environment variable encryption
 - Private networking between services
@@ -77,6 +86,7 @@ ENABLE_METRICS=true
 - DDoS protection included
 
 ## Monitoring & Alerting
+
 - Application performance monitoring
 - Database connection monitoring
 - Uptime monitoring (99.95% SLA)
@@ -84,6 +94,7 @@ ENABLE_METRICS=true
 - Real-time metrics dashboard
 
 ## Next Steps
+
 1. Create App Platform configuration
 2. Deploy applications to App Platform
 3. Configure custom domain (optional)
@@ -91,6 +102,7 @@ ENABLE_METRICS=true
 5. Validate production deployment
 
 ## Benefits of App Platform vs Traditional Infrastructure
+
 - **Simplified Management**: No server maintenance required
 - **Auto-scaling**: Automatic scaling based on demand
 - **Built-in CI/CD**: Integrated deployment pipeline
